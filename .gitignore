@@ -1,0 +1,11 @@
+node_modules
+public
+.tmp
+.idea
+client/bower_components
+dist
+/server/config/local.env.js
+npm-debug.log
+data
+start_mongo
+start_server
