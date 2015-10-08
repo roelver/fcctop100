@@ -67,7 +67,7 @@ exports.load = function(req, res) {
     };
 
   console.log('Loading all_users.json');
-  var filename = path.resolve("./all_users.json");
+  var filename = path.resolve("server/all_users.json");
   console.log(filename);
   
   var total = 0;
