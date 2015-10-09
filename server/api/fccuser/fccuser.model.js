@@ -12,6 +12,7 @@ var FccuserSchema = new Schema({
   basejumps: Number,
   waypoints: Number,
   bonfires: Number,
+  total: Number,
   lastUpdate: Date
 });
 

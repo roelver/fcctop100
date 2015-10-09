@@ -12,7 +12,7 @@
 var _ = require('lodash');
 var Fccuser = require('./fccuser.model');
 var fs = require('fs');
-var http = require('http');
+var https = require('https');
 var path = require('path');
 var request = require('request');
 var cheerio = require('cheerio');
@@ -25,11 +25,8 @@ exports.index = function(req, res) {
 exports.top100 = function(req, res) {
 
    var query = Fccuser
-      .find({$or: 
-          [{points: {$gt:0}},
-           {ziplines: {$gt:0}},
-           {basejumps: {$gt:0}}]});
-   query.sort('-basejumps -ziplines -points -bonfires -waypoints');
+      .find({total: {$gt:0}});
+   query.sort('-total -basejumps -ziplines -points');
    query.limit(100);
    query.exec(function(err, fccusers) {
       if (err) { return handleError(res, err); }
@@ -57,7 +54,8 @@ exports.load = function(req, res) {
                   ziplines: 0,
                   waypoints: 0,
                   bonfires: 0,
-                  basejumps: 0
+                  basejumps: 0,
+                  total: 0
                };
                Fccuser.create(newUser, function(err) {
                   if(err) { console.log(err); return handleError(res, err); }
@@ -67,27 +65,74 @@ exports.load = function(req, res) {
     };
 
   console.log('Loading all_users.json');
-  var filename = path.resolve("server/all_users.json");
-  console.log(filename);
-  
   var total = 0;
-  fs.readFile(filename, "utf8", function(err, data) {
-      if (err) {
-        console.log(err); 
-        return handleError(res, err); 
-      }
-      var users = JSON.parse(data);
-      console.log('File length',users.length);
-      total = users.length;
-      for (var i=0; i< users.length; i++) {
-          Fccuser.find({username: users[i].username}, addFccUser(users[i].username));
-      }
-      res.writeHead(200, {
-        "Content-Type": "text/html"
-      });
-      res.write('<h1>Processed '+total+' records</h1>');
-      res.end();
+
+  var opts = {
+    host: 'gitter.im',
+    method: 'GET',
+    path: '/api/v1/rooms/546fd572db8155e6700d6eaf/users?access_token=f1670594b8b9cd40d03f724d989f7d1840530219'
+  };
+  var req = https.request(opts, function(resp) {
+    console.log('In request');
+    resp.setEncoding('utf-8');
+
+    var responseString = '';
+
+    resp.on('data', function(data) {
+      responseString += data;
     });
+
+    console.log('Processing Data ');
+    resp.on('end', function() {
+
+      console.log('End message: '+responseString.length);
+
+      var users = JSON.parse(responseString);
+      console.log('Rows: ', users.length);
+      Fccuser.find().count(function(err, count) {
+
+          total = users.length;
+          if (count > 50) count = count - 50;
+          console.log('Users received: '+total+' Skipping: '+count);
+
+          for (var i=count; i< users.length; i++) {
+              Fccuser.find({username: users[i].username}, addFccUser(users[i].username));
+          }
+          res.writeHead(200, {
+            "Content-Type": "text/html"
+          });
+
+          res.write('<h1>Processed '+total+' records</h1>');
+          res.end();
+
+      });
+    });
+  });
+
+  console.log('Start write');
+  req.end();
+
+  // var filename = path.resolve("server/all_users.json");
+  // console.log(filename);
+  
+  // var total = 0;
+  // fs.readFile(filename, "utf8", function(err, data) {
+  //     if (err) {
+  //       console.log(err); 
+  //       return handleError(res, err); 
+  //     }
+  //     var users = JSON.parse(data);
+  //     console.log('File length',users.length);
+  //     total = users.length;
+  //     for (var i=0; i< users.length; i++) {
+  //         Fccuser.find({username: users[i].username}, addFccUser(users[i].username));
+  //     }
+  //     res.writeHead(200, {
+  //       "Content-Type": "text/html"
+  //     });
+  //     res.write('<h1>Processed '+total+' records</h1>');
+  //     res.end();
+  //   });
 };
 
 // Updates an existing fccuser in the DB.
@@ -149,7 +194,8 @@ var doVerify = function(crit, rskip, rlimit) {
                          ziplines: 0, 
                          basejumps: 0, 
                          waypoints: 0, 
-                         bonfires: 0, 
+                         bonfires: 0,
+                         total: 0,
                          lastUpdate: new Date()};
             if(!error){
                 // Next, we'll utilize the cheerio library on the returned html which will essentially give us jQuery functionality
@@ -203,6 +249,7 @@ var doVerify = function(crit, rskip, rlimit) {
                 json.existing = false;
                 json.img = "error";
             }
+            json.total = (json.basejumps * 50) + (json.ziplines * 20) + json.points;
             store(json);
         });
 
