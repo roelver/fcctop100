@@ -114,6 +114,20 @@ exports.load = function(req, res) {
 };
 
 // Updates an existing fccuser in the DB.
+exports.verifyUser = function(req, res) {
+
+   var rskip = 0;
+   var rlimit = 1;
+
+   var user = req.params.username;
+
+   var crit = {$and: [{username: user}, {lastUpdate: {$lt: new Date((new Date())-1000*60*60*1)}}]};
+
+   setTimeout(doVerify, 100, crit, rskip, rlimit);
+   res.status(200).send('<h1>User '+user +' will be updated.</h1>').end();
+};
+
+// Updates an existing fccuser in the DB.
 exports.verifyUpdate = function(req, res) {
 
    var rskip = 0;
@@ -161,7 +175,7 @@ var doVerify = function(crit, rskip, rlimit) {
    query.limit(25);
 
    query.exec(function (err, fccusers) {
-    if (!fccusers || fccusers.length == 0) {rlimit = 0; }
+    if (!fccusers || fccusers.length === 0) {rlimit = 0; }
     fccusers.forEach( function(fccusr) {
         var baseUrl = 'http://www.freecodecamp.com/'+fccusr.username;
 
