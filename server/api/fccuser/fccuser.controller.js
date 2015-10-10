@@ -64,7 +64,6 @@ exports.load = function(req, res) {
         };
     };
 
-  console.log('Loading all_users.json');
   var total = 0;
 
   var opts = {
@@ -111,28 +110,6 @@ exports.load = function(req, res) {
 
   console.log('Start write');
   req.end();
-
-  // var filename = path.resolve("server/all_users.json");
-  // console.log(filename);
-  
-  // var total = 0;
-  // fs.readFile(filename, "utf8", function(err, data) {
-  //     if (err) {
-  //       console.log(err); 
-  //       return handleError(res, err); 
-  //     }
-  //     var users = JSON.parse(data);
-  //     console.log('File length',users.length);
-  //     total = users.length;
-  //     for (var i=0; i< users.length; i++) {
-  //         Fccuser.find({username: users[i].username}, addFccUser(users[i].username));
-  //     }
-  //     res.writeHead(200, {
-  //       "Content-Type": "text/html"
-  //     });
-  //     res.write('<h1>Processed '+total+' records</h1>');
-  //     res.end();
-  //   });
 };
 
 // Updates an existing fccuser in the DB.
@@ -144,7 +121,8 @@ exports.verifyUpdate = function(req, res) {
    var dt = new Date();
    dt.setDate(dt.getDate() - 2);
 
-   var crit = {$and: [{"lastUpdate": { "$lt": dt}},{existing: true}]};
+ //  var crit = {$and: [{"lastUpdate": { "$lt": dt}},{existing: true}]};
+   var crit = {$and: [{total: {$exists: false}},{existing: true}]};
 
    setTimeout(doVerify, 100, crit, rskip, rlimit);
    res.status(200).send('<h1>Update verification started. Keep an eye on the logs</h1>').end();

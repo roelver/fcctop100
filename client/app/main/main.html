@@ -13,7 +13,7 @@
       <h1 class="page-header">Top100:</h1>
       <table class="table table-striped table-bordered">
         <tr>
-          <th>#</th><th>Camper name</th><th>Basejumps</th><th>Ziplines</th><th>Points</th><th>Total</th><th>Bonfires</th><th>Waypoints</th>
+          <th>#</th><th>Camper name</th><th>Basejumps (x50)</th><th>Ziplines (x20)</th><th>Points</th><th>Total score</th><th>Bonfires</th><th>Waypoints</th>
         </tr>
         <tr class="top100" ng-repeat="camper in campers">
           <td>{{$index+1}}</td>
@@ -26,16 +26,17 @@
           <td class="count">{{camper.bonfires}}</td>
           <td class="count">{{camper.waypoints}}</td>
         </tr>
-        <tr>
-          <td colspan="8">(A Basejump counts for 50 points and a Zipline for 20)</td>
-        </tr>
       </table>
+      <p class="disclaimer">
+          This list is assembled by taking a list of users from the <a href="https://gitter.im/FreeCodeCamp/FreeCodeCamp">FreeCodeCamp chat</a> and screen scraping the user's detail pages from the FreeCodeCamp site. This list is updated every couple of days. It is not a realtime presentation of user scores on FreeCodeCamp.com.<br/> The list is ordered by descending total score. This score is calculated by increasing the Points with Basejump * 50 and Ziplines * 20.
+       </p>
+
     </div>
   </div>
 </div>
 
 <footer class="footer">
   <div class="container">
-      <p>By <a href="http://www.freecodecamp.com/roelver">@roelver</a> | Updated: 8 oct 2015</p>
+      <p>By <a href="http://www.freecodecamp.com/roelver">@roelver</a> | Updated: 10 oct 2015</p>
   </div>
 </footer>
