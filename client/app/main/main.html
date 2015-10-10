@@ -13,16 +13,16 @@
       <h1 class="page-header">Top100:</h1>
       <table class="table table-striped table-bordered">
         <tr>
-          <th>#</th><th>Camper name</th><th>Basejumps (x50)</th><th>Ziplines (x20)</th><th>Points</th><th>Total score</th><th>Bonfires</th><th>Waypoints</th><th class="lastchecked">Last checked</th>
+          <th>#</th><th>Camper name</th><th>Total score</th><th>Points</th><th>Basejumps (x60)</th><th>Ziplines (x30)</th><th>Bonfires (x3)</th><th>Waypoints</th><th class="lastchecked">Last checked</th>
         </tr>
         <tr class="top100" ng-repeat="camper in campers">
           <td>{{$index+1}}</td>
           <td><a href="http://www.freecodecamp.com/{{camper.username}}"><img ng-src="{{camper.img}}" class="userimg"/>
           <span class="user-name">{{camper.username}}</span></a></td>
-          <td class="count">{{camper.basejumps}}</td>
-          <td class="count">{{camper.ziplines}}</td>
           <td class="count">{{camper.points}}</td>
           <td class="count">{{camper.total}}</td>
+          <td class="count">{{camper.basejumps}}</td>
+          <td class="count">{{camper.ziplines}}</td>
           <td class="count">{{camper.bonfires}}</td>
           <td class="count">{{camper.waypoints}}</td>
           <td class="lastchecked">{{camper.lastUpdate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
@@ -31,7 +31,7 @@
       <p class="disclaimer">
           This list is assembled by taking a list of users from the <a href="https://gitter.im/FreeCodeCamp/FreeCodeCamp">FreeCodeCamp chat</a> and screen scraping the user's detail pages from the FreeCodeCamp site. This list is updated every couple of days. It is not a realtime presentation of user scores on FreeCodeCamp.com.<br/> 
           The list is ordered by descending total score. This score is calculated as 
-          <em>Points + (Basejumps * 50) + (Ziplines * 20)</em>.
+          <em>Points + (Basejumps * 60) + (Ziplines * 30) + (Bonfires * 3)</em>.
        </p>
 
     </div>

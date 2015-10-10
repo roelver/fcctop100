@@ -122,8 +122,8 @@ exports.verifyUpdate = function(req, res) {
    var dt = new Date();
    dt.setDate(dt.getDate() - 2);
 
- //  var crit = {$and: [{"lastUpdate": { "$lt": dt}},{existing: true}]};
-   var crit = {$and: [{total: {$exists: false}},{existing: true}]};
+   var crit = {$and: [{"lastUpdate": { "$lt": dt}},{existing: true}]};
+ //  var crit = {$and: [{total: {$exists: false}},{existing: true}]};
 
    setTimeout(doVerify, 100, crit, rskip, rlimit);
    res.status(200).send('<h1>Update verification started. Keep an eye on the logs</h1>').end();
@@ -228,7 +228,7 @@ var doVerify = function(crit, rskip, rlimit) {
                 json.existing = false;
                 json.img = "error";
             }
-            json.total = (json.basejumps * 50) + (json.ziplines * 20) + json.points;
+            json.total = (json.basejumps * 60) + (json.ziplines * 30) + (json.bonfires * 3) + json.points;
             store(json);
         });
 
