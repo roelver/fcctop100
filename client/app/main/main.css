@@ -53,3 +53,14 @@ tr.top100 td {
 td.count {
     text-align: center;
 }
+.disclaimer {
+    font-size: 16px;
+    border: 1px solid #aaa;
+    padding: 10px;
+}
+.lastchecked {
+    width: 5%;
+}
+td.lastchecked {
+    font-size: 12px;
+}

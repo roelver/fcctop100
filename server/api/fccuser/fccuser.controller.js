@@ -55,7 +55,8 @@ exports.load = function(req, res) {
                   waypoints: 0,
                   bonfires: 0,
                   basejumps: 0,
-                  total: 0
+                  total: 0,
+                  lastUpdate: new Date()
                };
                Fccuser.create(newUser, function(err) {
                   if(err) { console.log(err); return handleError(res, err); }
@@ -234,7 +235,7 @@ var doVerify = function(crit, rskip, rlimit) {
     });
     if (rskip < rlimit) {
       console.log('Submit another chunk: '+ rskip+' vs '+rlimit);
-      rskip = rskip + 25;
+    //  rskip = rskip + 25;
       setTimeout(doVerify, 20000, crit, rskip, rlimit);
     }
     else {
