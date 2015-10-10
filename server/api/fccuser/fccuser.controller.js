@@ -124,7 +124,7 @@ exports.verifyUpdate = function(req, res) {
 
  //  var crit = {$and: [{"lastUpdate": { "$lt": dt}},{existing: true}]};
  //  var crit = {existing: true};
-   var crit = {total: {$gt:300}};
+   var crit = {$and: [{total: {$gt:300}},{lastUpdate: {$lt: new Date((new Date())-1000*60*60*1)}}]};
  //  var crit = {$and: [{total: {$exists: false}},{existing: true}]};
 
    setTimeout(doVerify, 100, crit, rskip, rlimit);
