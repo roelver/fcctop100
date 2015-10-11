@@ -56,10 +56,11 @@ exports.load = function(req, res) {
                   bonfires: 0,
                   basejumps: 0,
                   total: 0,
-                  lastUpdate: new Date()
+                  lastUpdate: new Date((new Date())-1000*60*60)
                };
-               Fccuser.create(newUser, function(err) {
+               Fccuser.create(newUser, function(err, data) {
                   if(err) { console.log(err); return handleError(res, err); }
+                  updateUser(data.username);
                });
             }
         };
@@ -101,7 +102,6 @@ exports.load = function(req, res) {
           res.writeHead(200, {
             "Content-Type": "text/html"
           });
-
           res.write('<h1>Processed '+total+' records</h1>');
           res.end();
 
@@ -116,17 +116,22 @@ exports.load = function(req, res) {
 // Updates an existing fccuser in the DB.
 exports.verifyUser = function(req, res) {
 
-   var rskip = 0;
-   var rlimit = 1;
-
    var user = req.params.username;
-
-   var crit = {$and: [{username: user}, {lastUpdate: {$lt: new Date((new Date())-1000*60*60*0.01)}}]};
-   console.log('Refresh user '+user);
-   doVerify(crit, rskip, rlimit);
+   updateUser(user);
 
  //  res.status(200).send('<h1>User '+user +' will be updated.</h1>').end();
    res.status(200).send("OK");
+};
+
+// Updates an existing fccuser in the DB.
+exports.verifyNew = function(req, res) {
+
+   var rskip = 0;
+   var rlimit = 10000000;
+
+   var crit = {img: { "$exists": false}};
+   setTimeout(doVerify, 100, crit, rskip, rlimit);
+   res.status(200).send('<h1>Update new users started. Keep an eye on the logs</h1>').end();
 };
 
 // Updates an existing fccuser in the DB.
@@ -262,6 +267,10 @@ var getPoints = function(data) {
       return parseInt(points.substring(start,end));
 };
 
+var updateUser = function(user) {
+    var crit = {$and: [{username: user}, {lastUpdate: {$lt: new Date((new Date())-1000*60*60*0.01)}}]};
+    doVerify(crit, 0, 1);  
+};
 
 var getUnique = function(arr) {
       var uniqueUrls = [];
