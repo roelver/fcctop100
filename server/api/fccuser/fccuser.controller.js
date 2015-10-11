@@ -122,9 +122,11 @@ exports.verifyUser = function(req, res) {
    var user = req.params.username;
 
    var crit = {$and: [{username: user}, {lastUpdate: {$lt: new Date((new Date())-1000*60*60*1)}}]};
+   console.log('Refresh user '+user);
+   doVerify(crit, rskip, rlimit);
 
-   setTimeout(doVerify, 100, crit, rskip, rlimit);
-   res.status(200).send('<h1>User '+user +' will be updated.</h1>').end();
+ //  res.status(200).send('<h1>User '+user +' will be updated.</h1>').end();
+   res.status(200).send("OK");
 };
 
 // Updates an existing fccuser in the DB.
