@@ -121,7 +121,7 @@ exports.verifyUser = function(req, res) {
 
    var user = req.params.username;
 
-   var crit = {$and: [{username: user}, {lastUpdate: {$lt: new Date((new Date())-1000*60*60*1)}}]};
+   var crit = {$and: [{username: user}, {lastUpdate: {$lt: new Date((new Date())-1000*60*60*0.01)}}]};
    console.log('Refresh user '+user);
    doVerify(crit, rskip, rlimit);
 

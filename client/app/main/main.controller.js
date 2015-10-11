@@ -15,8 +15,7 @@ angular.module('fccuserlistApp')
         setTimeout(function() {
             $scope.getData();
             $scope.$apply();
-        }, 2000);
-       // $scope.getData();
+        }, 3000);
       });
     };
 
