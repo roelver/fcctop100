@@ -135,14 +135,7 @@ exports.verifyUpdate = function(req, res) {
    var rskip = 0;
    var rlimit = 10000000;
 
-   var dt = new Date();
-   dt.setDate(dt.getDate() - 2);
-
-   var crit = {$and: [{"lastUpdate": { "$lt": dt}},{existing: true}]};
- //  var crit = {existing: true};
- //  var crit = {$and: [{total: {$gt:300}},{lastUpdate: {$lt: new Date((new Date())-1000*60*60*1)}}]};
- //  var crit = {$and: [{total: {$exists: false}},{existing: true}]};
-
+   var crit = {"$and": [{"lastUpdate": { "$lt": new Date((new Date())-1000*60*60*24)}},{existing: true}]};
    setTimeout(doVerify, 100, crit, rskip, rlimit);
    res.status(200).send('<h1>Update verification started. Keep an eye on the logs</h1>').end();
 };
