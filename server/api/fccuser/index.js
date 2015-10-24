@@ -8,11 +8,12 @@ var router = express.Router();
 
 router.get('/', controller.index);
 router.get('/loadnew', controller.load);
+router.get('/update/all', controller.updateAll);
 router.get('/update/:username', controller.verifyUser);
-router.get('/verify/error', controller.verify);
+router.get('/verify/error', controller.verifyError);
 router.get('/verify/new', controller.verifyNew);
-router.get('/verify/:skip/:limit', controller.verify);
-router.get('/verify/update', controller.verifyUpdate);
-router.get('/top100', controller.top100);
+router.get('/verify/update', controller.updateExpired);
+router.get('/top100/recent', controller.top100recent);
+router.get('/top100/alltime', controller.top100alltime);
 
 module.exports = router;

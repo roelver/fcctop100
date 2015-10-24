@@ -1,12 +1,3 @@
-/**
- * Using Rails-like standard naming convention for endpoints.
- * GET     /fccusers              ->  index
- * POST    /fccusers              ->  create
- * GET     /fccusers/:id          ->  show
- * PUT     /fccusers/:id          ->  update
- * DELETE  /fccusers/:id          ->  destroy
- */
-
 'use strict';
 
 var _ = require('lodash');
@@ -22,7 +13,7 @@ exports.index = function(req, res) {
     return res.status(200).send('<h1>Not Implemented</h1>');
 };
 
-exports.top100 = function(req, res) {
+exports.top100alltime = function(req, res) {
 
    var query = Fccuser
       .find({total: {$gt:0}});
@@ -32,8 +23,18 @@ exports.top100 = function(req, res) {
       if (err) { return handleError(res, err); }
       return res.status(200).json(fccusers);
    });
- //  db.fccusers.find({$or: [{points: {$gt:0}},{ziplines: {$gt:0}},{basejumps: {$gt:0}}]})
- //    .sort([{basejumps: -1},{ziplines: -1},{bonfires: -1},{waypoints: -1}, {points:-1}])
+};
+
+exports.top100recent = function(req, res) {
+
+   var query = Fccuser
+      .find({totalRecent: {$gt:0}});
+   query.sort('-totalRecent -basejumpsRecent -ziplinesRecent -pointsRecent');
+   query.limit(100);
+   query.exec(function(err, fccusers) {
+      if (err) { return handleError(res, err); }
+      return res.status(200).json(fccusers);
+   });
 };
 
 // Creates a new fccuser in the DB.
@@ -46,7 +47,7 @@ exports.load = function(req, res) {
             if (err) { return handleError(res, err); }
 
             if (!fccusers || fccusers.length == 0) { 
-               console.log('Adding user:'+username, err, fccusers);
+               console.log('Adding user:'+username);
                var newUser = {
                   username: username,
                   existing: true,   // benefit of the doubt
@@ -56,6 +57,12 @@ exports.load = function(req, res) {
                   bonfires: 0,
                   basejumps: 0,
                   total: 0,
+                  pointsRecent: 0,
+                  ziplinesRecent: 0,
+                  waypointsRecent: 0,
+                  bonfiresRecent: 0,
+                  basejumpsRecent: 0,
+                  totalRecent: 0,
                   lastUpdate: new Date((new Date())-1000*60*60)
                };
                Fccuser.create(newUser, function(err, data) {
@@ -74,7 +81,6 @@ exports.load = function(req, res) {
     path: '/api/v1/rooms/546fd572db8155e6700d6eaf/users?access_token=f1670594b8b9cd40d03f724d989f7d1840530219'
   };
   var req = https.request(opts, function(resp) {
-    console.log('In request');
     resp.setEncoding('utf-8');
 
     var responseString = '';
@@ -83,18 +89,11 @@ exports.load = function(req, res) {
       responseString += data;
     });
 
-    console.log('Processing Data ');
+    console.log('Processing User Data from Chat');
     resp.on('end', function() {
 
-      console.log('End message: '+responseString.length);
-
       var users = JSON.parse(responseString);
-      console.log('Rows: ', users.length);
       Fccuser.find().count(function(err, count) {
-
-          total = users.length;
-          if (count > 50) count = count - 50;
-          console.log('Users received: '+total+' Skipping: '+count);
 
           for (var i=count; i< users.length; i++) {
               Fccuser.find({username: users[i].username}, addFccUser(users[i].username));
@@ -102,14 +101,13 @@ exports.load = function(req, res) {
           res.writeHead(200, {
             "Content-Type": "text/html"
           });
-          res.write('<h1>Processed '+total+' records</h1>');
+          res.write('<h1>Processed '+count+' records</h1>');
           res.end();
 
       });
     });
   });
 
-  console.log('Start write');
   req.end();
 };
 
@@ -118,68 +116,58 @@ exports.verifyUser = function(req, res) {
 
    var user = req.params.username;
    updateUser(user);
-
- //  res.status(200).send('<h1>User '+user +' will be updated.</h1>').end();
    res.status(200).send("OK");
 };
 
-// Updates an existing fccuser in the DB.
+// Updates an fccuser without an image but with existing=true.
 exports.verifyNew = function(req, res) {
 
-   var rskip = 0;
-   var rlimit = 10000000;
-
-   var crit = {img: { "$exists": false}};
-   setTimeout(doVerify, 100, crit, rskip, rlimit);
+   var crit = {$or: [{img: { "$exists": false}}, {$and: [{img: {"$exists": true}},{img: ""},{existing: true}]}]};
+   setTimeout(doVerify, 100, crit);
    res.status(200).send('<h1>Update new users started. Keep an eye on the logs</h1>').end();
 };
 
-// Updates an existing fccuser in the DB.
-exports.verifyUpdate = function(req, res) {
-
-   var rskip = 0;
-   var rlimit = 10000000;
+// Updates users that wer no
+exports.updateExpired = function(req, res) {
 
    var crit = {"$and": [{"lastUpdate": { "$lt": new Date((new Date())-1000*60*60*24)}},{existing: true}]};
-   setTimeout(doVerify, 100, crit, rskip, rlimit);
+   setTimeout(doVerify, 100, crit);
    res.status(200).send('<h1>Update verification started. Keep an eye on the logs</h1>').end();
 };
 
 // Updates an existing fccuser in the DB.
-exports.verify = function(req, res) {
+exports.updateAll = function(req, res) {
 
-   var rskip = parseInt(req.params.skip);
-   var rlimit = parseInt(req.params.limit);
-
-   var crit = {};
-   console.log(rskip);
-   if (rskip == undefined || isNaN(rskip)) {
-     console.log('Processing tech errors');
-     crit = {img: "error"};
-     rskip = 0;
-     rlimit = 5000;
-   }
-   else {
-     crit = {existing: true};
-   }
-
-   setTimeout(doVerify, 100, crit, rskip, rlimit);
+   var crit = {existing: true};
+   setTimeout(doVerify, 100, crit);
    res.status(200).send('<h1>Verification started. Keep an eye on the logs</h1>').end();
 };
 
-var doVerify = function(crit, rskip, rlimit) {
-  // var crit = {username: 'roelver'};
+//
+// Updates all users that were not updated because of an error
+//
+exports.verifyError = function(req, res) {
+   var crit = {img: "error"};
+   setTimeout(doVerify, 100, crit);
+   res.status(200).send('<h1>Verification started. Keep an eye on the logs</h1>').end();
+};
+
+//
+// Do the update. This procedure will update users in batches of 25 to avoid overloading the FCC server. 
+// It waits 20 seconds, betore the new update batch starts 
+//
+var doVerify = function(crit) {
+
+   console.log('Criterium:', crit);
    var query = Fccuser.find(crit);
-
-   query.skip(rskip);
    query.limit(25);
-
    query.exec(function (err, fccusers) {
-    if (!fccusers || fccusers.length === 0) {rlimit = 0; }
-    fccusers.forEach( function(fccusr) {
-        var baseUrl = 'http://www.freecodecamp.com/'+fccusr.username;
+      
+      if (fccusers && fccusers.length > 0) {
+        console.log('Processing batch with ',fccusers.length,'users' );
+        fccusers.forEach( function(fccusr) {
 
-        request(baseUrl, function(error, response, html){
+            var baseUrl = 'http://www.freecodecamp.com/'+fccusr.username;
 
             // First we'll check to make sure no errors occurred when making the request
             var json = { username : fccusr.username, 
@@ -191,72 +179,101 @@ var doVerify = function(crit, rskip, rlimit) {
                          waypoints: 0, 
                          bonfires: 0,
                          total: 0,
-                         lastUpdate: new Date()};
-            if(!error){
-                // Next, we'll utilize the cheerio library on the returned html which will essentially give us jQuery functionality
+                         pointsRecent : 0, 
+                         ziplinesRecent: 0, 
+                         basejumpsRecent: 0, 
+                         waypointsRecent: 0, 
+                         bonfiresRecent: 0,
+                         totalRecent: 0,
+                         lastUpdate: new Date()
+                      };
 
-                var $ = cheerio.load(html);
+            request(baseUrl, function(error, response, html) {
 
+                if (error) {
+                   console.log('>>>>>>>>>'+json.username + ' error:'+error);
+                   json.existing = false;
+                   json.img = "error";
+                   store(json);
+                   return;
+                }
+
+                 // Forwarded to the FCC homepage???
                 if (html.indexOf("<title>Learn to Code and Build Projects for Nonprofits | Free Code Camp</title>") > 0) {
                    json.existing = false;
                    error = "404: Not found";
                    console.log(json.username + ' error:'+error);
+                   store(json);
+                   return;
                 };
 
-                if(!error){
-                     $('h1.text-primary').filter(function(){
-                       json.points = getPoints($(this));
-                    });
+                console.log('Processing user: ', json.username);
+                var $ = cheerio.load(html);
 
-                    $('.public-profile-img').filter(function(){
-                       json.img = $(this)['0'].attribs.src;
-                    });
+                $('h1.text-primary').filter(function(){
+                   json.points = getPoints($(this));
+                });
 
-                    var urls = [];
-                    $('.table-striped td.col-xs-4 a').filter(function(){
-                       urls.push($(this)['0'].attribs.href);
-                    });
+                $('.public-profile-img').filter(function(){
+                   json.img = $(this)['0'].attribs.src;
+                });
 
-                    urls  = getUnique(urls);
-                    urls.forEach(function(murl) {
-                      if (murl.toLowerCase().indexOf('zipline') > 0) {json.ziplines++}
-                      if (murl.toLowerCase().indexOf('basejump') > 0) {json.basejumps++}
-                    });
- 
-                    var txts = [];
-                    $('.table-striped td.col-xs-4').filter(function(){
-                      var txt = $(this)['0'].children[0].data;
-                      if (txt) {
-                         txts.push(txt);
+                var threshold = new Date().getTime() - 30*24*60*60*1000;
+
+                var challenges = [];
+                $('.table-striped tr').filter(function(){
+                   var row = $(this)['0'];
+                   var rowdata = {};
+                   if (row.children[0].children[0].data == undefined) {
+                      rowdata.title = row.children[0].children[0].children[0].data;
+                   }
+                   else {
+                      rowdata.title = row.children[0].children[0].data;
+                   }
+                   rowdata.date = Date.parse(row.children[1].children[0].data);
+                   challenges.push(rowdata);
+                });
+
+                var uniqueChallenges = getUnique(challenges);
+
+                uniqueChallenges.forEach(function(challenge) {
+                  if (challenge.title.toLowerCase().indexOf('basejump') == 0) {
+                      json.basejumps++;
+                      if (challenge.date > threshold) {
+                        json.basejumpsRecent++;
                       }
-                    });
+                  }
+                  if (challenge.title.toLowerCase().indexOf('zipline') == 0) {
+                      json.ziplines++;
+                      if (challenge.date > threshold) {
+                        json.ziplinesRecent++;
+                      }
+                  }
+                  if (challenge.title.toLowerCase().indexOf('bonfire') == 0) {
+                      json.bonfires++;
+                      if (challenge.date > threshold) {
+                        json.bonfiresRecent++;
+                      }
+                  }
+                  if (challenge.title.toLowerCase().indexOf('waypoint') == 0) {
+                      json.waypoints++;
+                      if (challenge.date > threshold) {
+                        json.waypointsRecent++;
+                      }
+                  }
+                }); 
 
-                    txts  = getUnique(txts);
-                    txts.forEach(function(mtxt) {
-                      if (mtxt.toLowerCase().indexOf('waypoint') >= 0) {json.waypoints++}
-                      if (mtxt.toLowerCase().indexOf('bonfire') >= 0) {json.bonfires++}
-                    });
-                    console.log('Processing '+json.username);
-                }
-            }
-            else {
-                console.log('>>>>>>>>>'+json.username + ' error:'+error);
-                json.existing = false;
-                json.img = "error";
-            }
-            json.total = (json.basejumps * 60) + (json.ziplines * 30) + (json.bonfires * 3) + json.points;
-            store(json);
+                getRecentScores(html, json, threshold);
+        
+                json.totalRecent = (json.basejumpsRecent * 60) + (json.ziplinesRecent * 30) 
+                                  + (json.bonfiresRecent * 3) + json.pointsRecent;
+                json.total = (json.basejumps * 60) + (json.ziplines * 30) + (json.bonfires * 3) + json.points;
+                store(json);
+            });
+
         });
-
-    });
-    if (rskip < rlimit) {
-      console.log('Submit another chunk: '+ rskip+' vs '+rlimit);
-    //  rskip = rskip + 25;
-      setTimeout(doVerify, 20000, crit, rskip, rlimit);
-    }
-    else {
-      console.log('Processing completed: '+ rskip+' vs '+rlimit);
-    }
+        setTimeout(doVerify, 20000, crit);
+      }
   });
 };
 
@@ -267,21 +284,42 @@ var getPoints = function(data) {
       return parseInt(points.substring(start,end));
 };
 
+var getRecentScores = function(html, json, threshold) {
+
+  var heatmapDataStart = html.indexOf('var calendar =');
+  if (heatmapDataStart >0) {
+      heatmapDataStart += 15;
+      var heatmapDataEnd =   html.indexOf('}', heatmapDataStart) +1;
+      var heatmap  = JSON.parse(html.substring(heatmapDataStart, heatmapDataEnd));
+      json.pointsRecent = getRecentPoints(heatmap, threshold);
+  }
+};
+
+var getRecentPoints = function(heatmap, threshold) {
+  var recentPoints = 0;
+  for (var key in heatmap) {
+     if (heatmap.hasOwnProperty(key) && parseFloat(key) > (threshold/1000)) {
+        recentPoints++;
+    }
+  }
+  return recentPoints;
+};
+
 var updateUser = function(user) {
     var crit = {$and: [{username: user}, {lastUpdate: {$lt: new Date((new Date())-1000*60*60*0.01)}}]};
     doVerify(crit, 0, 1);  
 };
 
 var getUnique = function(arr) {
-      var uniqueUrls = [];
+      var uniqueChals = [];
       var x = {};
-      for (var i = 0;i< arr.length; i++) {
-          if (!x.hasOwnProperty(arr[i])) {
-              uniqueUrls.push(arr[i]);
-              x[arr[i]] = 1;
+      for (var i = arr.length-1;i>=0; i--) {
+          if (!(isNaN(arr[i].date)  ||   x.hasOwnProperty(arr[i].title))) {
+              uniqueChals.push(arr[i]);
+              x[arr[i].title] = 1;
           }
       }
-      return uniqueUrls;
+      return uniqueChals;
 };
 
 // Updates an existing fccuser in the DB.

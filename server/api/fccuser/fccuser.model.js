@@ -8,11 +8,17 @@ var FccuserSchema = new Schema({
   existing: Boolean,
   img: String,
   points: Number,
+  pointsRecent: Number,
   ziplines: Number,
+  ziplinesRecent: Number,
   basejumps: Number,
+  basejumpsRecent: Number,
   waypoints: Number,
+  waypointsRecent: Number,
   bonfires: Number,
+  bonfiresRecent: Number,
   total: Number,
+  totalRecent: Number,
   lastUpdate: Date
 });
 
