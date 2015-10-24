@@ -225,7 +225,7 @@ var doVerify = function(crit) {
                    var row = $(this)['0'];
                    var rowdata = {};
                    if (row.children[0].children[0].data == undefined) {
-                      if (row.children[0].children[0].children[0]) {}
+                      if (row.children[0].children[0].children[0]) {
                           rowdata.title = row.children[0].children[0].children[0].data;
                       }
                       else {
