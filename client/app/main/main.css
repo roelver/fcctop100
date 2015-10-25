@@ -1,28 +1,22 @@
-#banner {
-    border-bottom: none;
-    margin-top: -20px;
+@import url(https://fonts.googleapis.com/css?family=Lato);
+
+body {
+	background-color: #457E86;
+	color: #f5f5f5;
+}
+.header, .footer {
+    background-color:#381F0B;
+    color: #eeeeee;
+    height: 50px;
+    padding-top: 10px;
 }
 
-#banner h1 {
-    font-size: 60px;
-    line-height: 1;
-    letter-spacing: -1px;
+.header {
+	margin-bottom: 30px;
 }
-
-.hero-unit {
-    position: relative;
-    padding: 30px 15px;
-    color: #F5F5F5;
-    text-align: center;
-    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-    background: #381F0B;
-}
-
 .footer {
-    text-align: center;
-    padding: 30px 0;
-    margin-top: 70px;
-    border-top: 1px solid #E5E5E5;
+	margin-top: 30px;
+   text-align: center;
 }
 
 .navbar-text {
@@ -54,7 +48,8 @@ td.count {
     text-align: center;
 }
 .disclaimer {
-    font-size: 16px;
+	 background-color
+    font-size: 14px;
     border: 1px solid #aaa;
     padding: 10px;
 }
@@ -63,4 +58,31 @@ td.count {
 }
 td.lastchecked {
     font-size: 12px;
+}
+table.table-striped {
+	background-color: #f0f0f0;
+	color: #333;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	border-collapse: inherit;
+	border: 1px solid #351f0b;
+ }
+table.table-striped tr {
+	border: 0;
+ }
+
+#header {
+	background-color: #381F0B;
+	text-align: center;
+	border-color: #351f0b;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+#header h3 {
+	color: #f5f5f5;
+	margin: 0;
+	font-size: 25px;
+	font-family: 'Lato', sans-serif;
+	font-weight: 300;
 }
