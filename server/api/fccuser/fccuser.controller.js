@@ -29,7 +29,7 @@ exports.top100recent = function(req, res) {
 
    var query = Fccuser
       .find({totalRecent: {$gt:0}});
-   query.sort('-totalRecent -basejumpsRecent -ziplinesRecent -pointsRecent');
+   query.sort('-totalRecent -total -basejumpsRecent -ziplinesRecent -pointsRecent');
    query.limit(100);
    query.exec(function(err, fccusers) {
       if (err) { return handleError(res, err); }
@@ -67,11 +67,11 @@ exports.load = function(req, res) {
                };
                Fccuser.create(newUser, function(err, data) {
                   if(err) { console.log(err); return handleError(res, err); }
-                  updateUser(data.username);
+                //  updateUser(data.username);
                });
             }
         };
-    };
+     };
 
   var total = 0;
 
@@ -109,6 +109,10 @@ exports.load = function(req, res) {
   });
 
   req.end();
+  // Start processing the new users in 1 minute
+  var crit = {$or: [{img: { "$exists": false}}, {$and: [{img: {"$exists": true}},{img: ""},{existing: true}]}]};
+  setTimeout(doVerify, 60000, crit);
+
 };
 
 // Updates an existing fccuser in the DB.
@@ -312,7 +316,7 @@ var getRecentPoints = function(heatmap, threshold) {
 
 var updateUser = function(user) {
     var crit = {$and: [{username: user}, {lastUpdate: {$lt: new Date((new Date())-1000*60*60*0.01)}}]};
-    doVerify(crit, 0, 1);  
+    doVerify(crit);  
 };
 
 var getUnique = function(arr) {

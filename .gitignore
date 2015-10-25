@@ -9,3 +9,4 @@ npm-debug.log
 data
 start_mongo
 start_server
+mongo-queries.txt
