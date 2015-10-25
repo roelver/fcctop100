@@ -5,6 +5,12 @@ angular.module('fccuserlistApp')
     $scope.campers = [];
     $scope.onRecentPage = true;
 
+    $scope.singleUser;
+
+    $scope.username;
+
+    $scope.notFound = false;
+
     $scope.getDataRecent = function() {
 
       $scope.recentActivity = "recent activity from ";
@@ -32,6 +38,18 @@ angular.module('fccuserlistApp')
             }
             $scope.$apply();
         }, 3000);
+      });
+    };
+
+    $scope.getUserRanking = function() {
+		if (!$scope.username) return false;
+
+		$scope.notFound = false;
+      $http.get('/api/fccusers/ranking-'+($scope.onRecentPage?'r':'o')+'/'+$scope.username)
+         .then(function(response) {
+      		$scope.singleUser = response.data;
+      }, function(err) {
+      	$scope.notFound = true;
       });
     };
 

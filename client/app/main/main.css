@@ -3,6 +3,7 @@
 body {
 	background-color: #457E86;
 	color: #f5f5f5;
+	font-family: 'Lato', sans-serif;
 }
 .header, .footer {
     background-color:#381F0B;
@@ -56,6 +57,17 @@ td.count {
 .lastchecked {
     width: 5%;
 }
+.single {
+	float: right;
+}
+.rank-btn.btn {
+    background-color: #ffac33;
+    background-image: linear-gradient(#ffcc4d, #ffac33);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#ffcc4d, endColorstr=#ffac33, GradientType=0)";
+    border-color: #f1a02a;
+    color: #292f33 !important;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
 td.lastchecked {
     font-size: 12px;
 }
@@ -83,6 +95,8 @@ table.table-striped tr {
 	color: #f5f5f5;
 	margin: 0;
 	font-size: 25px;
-	font-family: 'Lato', sans-serif;
 	font-weight: 300;
+}
+.redborder {
+	border: 1px solid red;
 }

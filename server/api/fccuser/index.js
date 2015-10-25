@@ -15,5 +15,7 @@ router.get('/verify/new', controller.verifyNew);
 router.get('/verify/update', controller.updateExpired);
 router.get('/top100/recent', controller.top100recent);
 router.get('/top100/alltime', controller.top100alltime);
+router.get('/ranking-o/:username', controller.userRankingOverall);
+router.get('/ranking-r/:username', controller.userRankingRecent);
 
 module.exports = router;

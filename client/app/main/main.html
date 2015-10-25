@@ -14,6 +14,30 @@
       		<h3 ng-hide="onRecentPage">(unofficial) All Time Leaderboard</h3>
       	</th>
         </tr>
+        <tr class="top100">
+          <td colspan="10">
+          <div class="single"><span>Not listed below? Get your own ranking here: </span> <input type="text" placeholder="Username" ng-model="username"><button class="btn rank-btn" ng-click="getUserRanking()">Get ranking</button></div>
+          </td>
+        </tr>
+        <tr ng-show="notFound" class="top100">
+          <td colspan="10">
+          	<span>No ranking found for {{username}}</span> 
+          </td>
+        </tr>
+        <tr ng-show="singleUser && !notFound" class="top100 redborder">
+        	
+          <td>{{singleUser.ranking}}</td>
+          <td><a href="http://www.freecodecamp.com/{{singleUser.username}}" target="_blank"><img ng-src="{{singleUser.img}}" class="userimg"/>
+          <span class="user-name">{{singleUser.username}}</span></a></td>
+          <td class="count"><span ng-show="onRecentPage">{{singleUser.totalRecent}}</span><span ng-hide="onRecentPage">{{singleUser.total}}</span></td>
+          <td class="count"><span ng-show="onRecentPage">{{singleUser.pointsRecent}}</span><span ng-hide="onRecentPage">{{singleUser.points}}</span></td>
+          <td class="count"><span ng-show="onRecentPage">{{singleUser.basejumpsRecent}}</span><span ng-hide="onRecentPage">{{singleUser.basejumps}}</span></td>
+          <td class="count"><span ng-show="onRecentPage">{{singleUser.ziplinesRecent}}</span><span ng-hide="onRecentPage">{{singleUser.ziplines}}</span></td>
+          <td class="count"><span ng-show="onRecentPage">{{singleUser.bonfiresRecent}}</span><span ng-hide="onRecentPage">{{singleUser.bonfires}}</span></td>
+          <td class="count"><span ng-show="onRecentPage">{{singleUser.total}}</span><span ng-hide="onRecentPage">{{singleUser.totalRecent}}</span></td>
+          <td class="lastchecked">{{singleUser.lastUpdate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+          <td class="refresh"><button class="btn btn-default" ng-click="refreshUser(singleUser.username)"><i class="glyphicon glyphicon-refresh"></i></button></td>
+        </tr>
         <tr>
           <th>#</th>
           <th>Camper name</th>

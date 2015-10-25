@@ -37,6 +37,16 @@ exports.top100recent = function(req, res) {
    });
 };
 
+exports.userRankingOverall = function(req, res) {
+	userRanking (req, res, true);
+};
+
+exports.userRankingRecent = function(req, res) {
+	userRanking (req, res, false);
+};
+
+
+
 // Creates a new fccuser in the DB.
 exports.load = function(req, res) {
 
@@ -162,7 +172,6 @@ exports.verifyError = function(req, res) {
 //
 var doVerify = function(crit) {
 
-   console.log('Criterium:', crit);
    var query = Fccuser.find(crit);
    query.limit(25);
    query.exec(function (err, fccusers) {
@@ -329,6 +338,30 @@ var getUnique = function(arr) {
           }
       }
       return uniqueChals;
+};
+
+var userRanking = function(req, res, overall) {
+
+	var userid = req.params.username;
+	if (!userid) {return handleError(res, 'No user name');}
+
+   Fccuser.findOne({username: { $regex : new RegExp(userid, "i") }}, function(err, singleUser) {
+
+	  	if (err || singleUser == null) return handleError(res, err);
+   	var crit = {};
+   	if (overall) {
+   		crit = {total: {$gt: singleUser.total }};
+   	}
+   	else {
+   		crit = {totalRecent: {$gt: singleUser.totalRecent }};
+   	}
+   	Fccuser.find(crit).count().exec(function (err, count) {
+	   	if (err) return handleError(res, err);
+	   	var sUser = JSON.parse(JSON.stringify(singleUser));
+   		sUser.ranking = count+1;
+	      return res.status(200).json(sUser);
+		});
+   });
 };
 
 // Updates an existing fccuser in the DB.
