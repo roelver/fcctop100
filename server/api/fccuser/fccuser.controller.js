@@ -152,7 +152,7 @@ exports.updateExpired = function(req, res) {
 // Updates an existing fccuser in the DB.
 exports.updateAll = function(req, res) {
 
-   var crit = {$and: [{existing: true}, {lastUpdate: {$lt: new Date((new Date())-1000*60*60*3)}}]};
+   var crit = {$and: [{existing: true}, {lastUpdate: {$lt: new Date((new Date())-1000*60*60*5)}}]};
    setTimeout(doVerify, 100, crit);
    res.status(200).send('<h1>Verification started. Keep an eye on the logs</h1>').end();
 };
