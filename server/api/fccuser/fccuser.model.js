@@ -19,7 +19,8 @@ var FccuserSchema = new Schema({
   bonfiresRecent: Number,
   total: Number,
   totalRecent: Number,
-  lastUpdate: Date
+  lastUpdate: Date,
+  following: [String]
 });
 
 module.exports = mongoose.model('Fccuser', FccuserSchema);

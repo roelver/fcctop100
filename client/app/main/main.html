@@ -1,6 +1,6 @@
 
 <header class="header">
-    <a href="http://www.freecodecamp.com"><img class="fcclogo" src="https://s3.amazonaws.com/freecodecamp/freecodecamp_logo.svg" alt="FreeCodeCamp logo"></a>
+    <a href="http://www.freecodecamp.com"><img class="fcclogo" src="https://s3.amazonaws.com/freecodecamp/freecodecamp_logo.svg" alt="FreeCodeCamp logo"></a><div class="right greeting" ng-show="isLoggedIn()">Hello {{me.username}}</div><div class="right" ng-hide="isLoggedIn()"><button ng-click="authenticate('github')" class="btn btn-lg btn-block btn-github btn-social"><i class="fa fa-github"></i>Log in with Github</button></div>
 </header>
 
 <div class="container">
@@ -14,9 +14,13 @@
       		<h3 ng-hide="onRecentPage">(unofficial) All Time Leaderboard</h3>
       	</th>
         </tr>
+        <tr class="top100" ng-show="isLoggedIn()">
+          <td colspan="10">Following:&nbsp;&nbsp;<span ng-repeat="follow in me.followimg"><img ng-src="{{follow}}" class="userimg"/></span><button class="btn rank-btn" ng-click="getDataFollowing()" ng-hide="showingFollowing">Show Following</button><button class="btn rank-btn" ng-click="getDataRecent()" ng-show="showingFollowing">Show Top 100</button>
+          </td>
+        </tr>
         <tr class="top100">
           <td colspan="10">
-          <div class="single"><span>Not listed below? Get your own ranking here: </span> <input type="text" placeholder="Username" ng-model="username"> <button class="btn rank-btn" ng-click="getUserRanking()">Get ranking</button></div>
+          <div class="single"><span>Not listed below? Get your own ranking here: </span> <input type="text" placeholder="Username" ng-model="username"> <button class="btn rank-btn" ng-click="getUserRanking()">Get ranking</button> <button ng-show="isLoggedIn()" ng-click="followUser('input')" class="btn rank-btn">Follow</button></div>
           </td>
         </tr>
         <tr ng-show="notFound" class="top100">
@@ -24,7 +28,7 @@
           	<span>No ranking found for {{username}}</span> 
           </td>
         </tr>
-        <tr ng-show="singleUser && !notFound" class="top100 redborder">
+        <tr ng-show="singleUser && !notFound" class="top100">
         	
           <td>{{singleUser.ranking}}</td>
           <td><a href="http://www.freecodecamp.com/{{singleUser.username}}" target="_blank"><img ng-src="{{singleUser.img}}" class="userimg"/>
@@ -36,7 +40,7 @@
           <td class="count"><span ng-show="onRecentPage">{{singleUser.bonfiresRecent}}</span><span ng-hide="onRecentPage">{{singleUser.bonfires}}</span></td>
           <td class="count"><span ng-show="onRecentPage">{{singleUser.total}}</span><span ng-hide="onRecentPage">{{singleUser.totalRecent}}</span></td>
           <td class="lastchecked">{{singleUser.lastUpdate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-          <td class="refresh"><button class="btn btn-default" ng-click="refreshUser(singleUser.username)"><i class="glyphicon glyphicon-refresh"></i></button></td>
+          <td class="buttons"><button class="btn btn-default" ng-click="refreshUser(singleUser.username)"><i class="glyphicon glyphicon-refresh"></i></button></td>
         </tr>
         <tr>
           <th>#</th>
@@ -51,7 +55,7 @@
           	<span ng-hide="onRecentPage">Recent score</span>
           </th>
           <th class="lastchecked">Last checked</th>
-          <th></th>
+          <th class="buttons"></th>
         </tr>
         <tr class="top100" ng-repeat="camper in campers">
           <td>{{$index+1}}</td>
@@ -64,7 +68,11 @@
           <td class="count"><span ng-show="onRecentPage">{{camper.bonfiresRecent}}</span><span ng-hide="onRecentPage">{{camper.bonfires}}</span></td>
           <td class="count"><span ng-show="onRecentPage">{{camper.total}}</span><span ng-hide="onRecentPage">{{camper.totalRecent}}</span></td>
           <td class="lastchecked">{{camper.lastUpdate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-          <td class="refresh"><button class="btn btn-default" ng-click="refreshUser(camper.username)"><i class="glyphicon glyphicon-refresh"></i></button></td>
+          <td class="buttons">
+            <button class="btn btn-default" ng-click="refreshUser(camper.username)"><i class="glyphicon glyphicon-refresh"></i></button>
+            <button class="btn btn-default" ng-show="isLoggedIn() && isNotFollowing(camper.username)" ng-click="followUser(camper.username)"><i class="glyphicon glyphicon-thumbs-up"></i></button>
+            <button class="btn btn-default" ng-show="isLoggedIn() && isFollowing(camper.username)" ng-click="unfollowUser(camper.username)"><i class="glyphicon glyphicon-thumbs-down"></i></button>
+          </td>
         </tr>
         <tr>
           <td colspan="10">

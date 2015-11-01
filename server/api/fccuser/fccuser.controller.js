@@ -37,6 +37,25 @@ exports.top100recent = function(req, res) {
    });
 };
 
+exports.followingRecent = function(req, res) {
+   var me = req.params.meuser;
+
+   Fccuser.findOne({ username: me }, function(err, fccuser) { 
+      if (err) return next(err);
+      if (!fccuser) return res.status(401).send('Unauthorized');
+      var following = fccuser.following;
+      following.push(me);
+
+      var query = Fccuser
+        .find({username: {$in: following}});
+      query.sort('-totalRecent -total -basejumpsRecent -ziplinesRecent -pointsRecent');
+      query.exec(function(err, fccusers) {
+          if (err) { return handleError(res, err); }
+          return res.status(200).json(fccusers);
+      });
+    });
+};
+
 exports.userRankingOverall = function(req, res) {
 	userRanking (req, res, true);
 };
@@ -45,7 +64,58 @@ exports.userRankingRecent = function(req, res) {
 	userRanking (req, res, false);
 };
 
+exports.unfollowUser = function(req, res) {
+  var me = req.params.meuser;
+  var follow = req.params.followuser;
 
+  Fccuser.findOne({ username: me }, function(err, fccuser) { 
+    if (err) return next(err);
+    if (!fccuser) return res.status(401).send('Unauthorized');
+    var pos = fccuser.following.indexOf(follow);
+    if (pos >= 0) {
+       fccuser.following.splice(pos, 1);
+       fccuser
+         .save(function(err) {
+             if (err) {
+                res.send(err);
+             }
+             else {
+                console.log("User is updated")
+              res.json(fccuser);
+             }
+          });
+    }
+    else {
+      res.status(404).send('Not following '+follow);
+    }
+  });
+};
+
+exports.followUser = function(req, res) {
+  var me = req.params.meuser;
+  var follow = req.params.followuser;
+
+  Fccuser.findOne({ username: me }, function(err, fccuser) { 
+    if (err) return next(err);
+    if (!fccuser) return res.status(401).send('Unauthorized');
+    var pos = fccuser.following.indexOf(follow);
+    if (pos < 0) {
+       fccuser.following.push(follow);
+       fccuser
+         .save(function(err) {
+             if (err) {
+                res.send(err);
+             }
+             else {
+                res.json(fccuser);
+             }
+          });
+    }
+    else {
+      res.status(404).send('Already following '+follow);
+    }
+  });
+};
 
 // Creates a new fccuser in the DB.
 exports.load = function(req, res) {
@@ -164,6 +234,17 @@ exports.verifyError = function(req, res) {
    var crit = {img: "error"};
    setTimeout(doVerify, 100, crit);
    res.status(200).send('<h1>Verification started. Keep an eye on the logs</h1>').end();
+};
+
+exports.getVerifiedUsername = function(req, res) {
+
+  var userid = req.params.username;
+  if (!userid) {return handleError(res, 'No user name');}
+   Fccuser.findOne({username: { $regex : new RegExp(userid, "i") }}, function(err, singleUser) {
+
+      if (err || singleUser == null) return handleError(res, err);
+      return res.status(200).json(singleUser);
+    });
 };
 
 //
@@ -344,7 +425,6 @@ var userRanking = function(req, res, overall) {
 
 	var userid = req.params.username;
 	if (!userid) {return handleError(res, 'No user name');}
-
    Fccuser.findOne({username: { $regex : new RegExp(userid, "i") }}, function(err, singleUser) {
 
 	  	if (err || singleUser == null) return handleError(res, err);
@@ -355,6 +435,7 @@ var userRanking = function(req, res, overall) {
    	else {
    		crit = {totalRecent: {$gt: singleUser.totalRecent }};
    	}
+
    	Fccuser.find(crit).count().exec(function (err, count) {
 	   	if (err) return handleError(res, err);
 	   	var sUser = JSON.parse(JSON.stringify(singleUser));

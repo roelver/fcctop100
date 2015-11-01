@@ -1,27 +1,55 @@
 'use strict';
 
 angular.module('fccuserlistApp')
-  .controller('MainCtrl', function ($scope, $http) {
+  .controller('MainCtrl', [ '$scope', '$http', '$auth', '$location',
+    function ($scope, $http, $auth, $location ) {
     $scope.campers = [];
     $scope.onRecentPage = true;
+    $scope.showingFollowing = false;
 
     $scope.singleUser;
 
-    $scope.username;
+    $scope.me;
 
     $scope.notFound = false;
+
+    $scope.isLoggedIn = $auth.isAuthenticated;
+
+    $scope.authenticate = function(provider) {
+      $auth.authenticate(provider)
+        .then($scope.getMe);
+    };
+
+    $scope.getMe = function(response) {
+      $http.get('/auth/github/me')
+        .success(function(data) {
+          $scope.me = data;
+      })
+    };
 
     $scope.getDataRecent = function() {
 
       $scope.recentActivity = "recent activity from ";
       $scope.onRecentPage = true;
+      $scope.showingFollowing = false;
       $http.get('/api/fccusers/top100/recent').success(function(campers) {
+         $scope.campers = campers;
+      });
+    };
+
+    $scope.getDataFollowing = function() {
+
+      $scope.recentActivity = "recent activity from ";
+      $scope.onRecentPage = true;
+      $scope.showingFollowing = true;
+      $http.get('/api/fccusers/following/recent/'+$scope.me.username).success(function(campers) {
          $scope.campers = campers;
       });
     };
 
     $scope.getDataAlltime = function() {
        $scope.onRecentPage = false;
+       $scope.showingFollowing = false;
        $http.get('/api/fccusers/top100/alltime').success(function(campers) {
          $scope.campers = campers;
        });
@@ -41,6 +69,50 @@ angular.module('fccuserlistApp')
       });
     };
 
+    $scope.followUser = function(username) {
+      if (username === 'input') {
+        $http.get('/api/fccusers/verify/username/'+$scope.username)
+         .then(function(response) {
+           var user = response.data;
+           username = user.username;
+           $http.put('/api/fccusers/follow/'+$scope.me.username+'/'+username).success(function() {
+              $scope.getMe();
+           }); 
+        }, function(err) {
+          $scope.notFound = true;
+        });
+      }
+      else {
+        $scope.notFound = false;
+        $http.put('/api/fccusers/follow/'+$scope.me.username+'/'+username).success(function() {
+              $scope.getMe();
+        }); 
+      }
+    };
+
+    $scope.unfollowUser = function(username) {
+      if ($scope.showingFollowing) {
+        for (var i=0;i<$scope.campers.length; i++) {
+          if ($scope.campers[i].username === username) {
+            $scope.campers.splice(i,1);
+            break;
+          }
+        }
+      }
+
+      $http.put('/api/fccusers/unfollow/'+$scope.me.username+'/'+username).success(function() {
+        $scope.getMe();
+      });
+    };
+
+    $scope.isFollowing = function(username) {
+      return ($scope.me && $scope.me.username !== username && $scope.me.following.indexOf(username) >= 0);
+    };
+
+    $scope.isNotFollowing = function(username) {
+      return ($scope.me && $scope.me.username !== username && $scope.me.following.indexOf(username) < 0);
+    };
+
     $scope.getUserRanking = function() {
 		if (!$scope.username) return false;
 
@@ -53,6 +125,10 @@ angular.module('fccuserlistApp')
       });
     };
 
+    if ($scope.isLoggedIn()) {
+      $scope.getMe();
+    }
+
     $scope.getDataRecent();
 
-  });
+  }]);

@@ -7,7 +7,7 @@ body {
     background-color:#381F0B;
     color: #eeeeee;
     height: 50px;
-    padding-top: 10px;
+    width: 100%;
 }
 
 .header {
@@ -17,7 +17,9 @@ body {
 	margin-top: 30px;
    text-align: center;
 }
-
+.header .fcclogo {
+    margin-top: 10px;
+}
 .navbar-text {
     margin-left: 15px;
 }
@@ -26,6 +28,7 @@ body {
     border: 2px solid #381F0B;
     border-radius: 4px;
     max-height: 40px;
+    margin: 1px;
 }
 h5 {
     color: red;
@@ -66,6 +69,12 @@ td.count {
     color: #292f33 !important;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
+td.buttons, th.buttons {
+    width: 100px;
+}
+.buttons {
+    font-size:10px;
+}
 td.lastchecked {
     font-size: 12px;
 }
@@ -95,6 +104,77 @@ table.table-striped tr {
 	font-size: 25px;
 	font-weight: 300;
 }
-.redborder {
-	border: 1px solid red;
+
+.right {
+    float: right;
+    margin-right: 20px;
+    margin-top: 3px;
+}
+.greeting {
+    font-size: 16px;
+    margin-top: 15px;
+}
+.btn-social.btn-lg :first-child {
+    line-height: 45px;
+    width: 45px;
+    font-size: 1.8em;
+}
+.btn-social > :first-child {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 32px;
+    line-height: 34px;
+    font-size: 1.6em;
+    text-align: center;
+    border-right: 1px solid rgba(0, 0, 0, 0.2);
+}
+.fa, [class^='ion-'] {
+    margin-right: 5px;
+}
+.fa {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transform: translate(0, 0);
+}
+
+.btn-social.btn-lg {
+    padding-left: 61px;
+    padding-right: 12px;
+}
+.btn-social {
+    width: 250px;
+    margin: auto;
+}
+.btn {
+    font-weight: 400;
+}
+.btn-github {
+    color: #fff;
+    background-color: #444444;
+    border-color: rgba(200, 200, 200, 0.15);
+}
+.btn-social {
+    position: relative;
+    padding-left: 44px;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.btn-block {
+    display: block;
+    width: 100%;
+}
+
+.fa-github:before {
+    content: "\f09b";
+}
+*, *:before, *:after {
+    box-sizing: border-box !important;
 }
