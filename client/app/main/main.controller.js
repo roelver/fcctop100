@@ -30,6 +30,7 @@ angular.module('fccuserlistApp')
     $scope.getDataRecent = function() {
 
       $scope.recentActivity = "recent activity from ";
+      $scope.singleUser = null;
       $scope.onRecentPage = true;
       $scope.showingFollowing = false;
       $http.get('/api/fccusers/top100/recent').success(function(campers) {
@@ -49,6 +50,7 @@ angular.module('fccuserlistApp')
 
     $scope.getDataAlltime = function() {
        $scope.onRecentPage = false;
+       $scope.singleUser = null;
        $scope.showingFollowing = false;
        $http.get('/api/fccusers/top100/alltime').success(function(campers) {
          $scope.campers = campers;
