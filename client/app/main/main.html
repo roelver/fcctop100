@@ -10,8 +10,8 @@
       <table class="table table-striped table-bordered">
         <tr>
         	<th id="header" colspan="10">
-        		<h3 ng-show="onRecentPage">(unofficial) Leaderboard over last 30 days activity</h3>
-      		<h3 ng-hide="onRecentPage">(unofficial) All Time Leaderboard</h3>
+        		<h3 ng-show="onRecentPage">(unofficial) Leaderboard over last 30 days activity  <a href="#" class="small-link" ng-click="getDataAlltime()" ng-show="onRecentPage">(All Time leaderboard)</a></h3>
+      		<h3 ng-hide="onRecentPage">(unofficial) All Time Leaderboard <a href="#" class="small-link" ng-click="getDataRecent()" ng-hide="onRecentPage">(30 days leaderboard)</a></h3>
       	</th>
         </tr>
         <tr class="top100" ng-show="isLoggedIn()">

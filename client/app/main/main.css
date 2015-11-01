@@ -9,7 +9,10 @@ body {
     height: 50px;
     width: 100%;
 }
-
+.small-link {
+    font-size: 14px;
+    color: #aaa;
+}
 .header {
 	margin-bottom: 30px;
 }
