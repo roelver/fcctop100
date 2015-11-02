@@ -117,6 +117,40 @@ exports.followUser = function(req, res) {
   });
 };
 
+exports.deDouble = function(req, res) {
+
+   Fccuser
+     .aggregate( [
+        { $group: { _id: { username: "$username" },
+               count: { $sum: 1 } } },
+        { $match: { count: { $gt: 1 } } },
+        { $project: { _id: 0, username: "$_id.username"}}
+        ], function (err, results) {
+        if (err) {
+            next(err);
+        } else {
+          results.forEach(function(user) {
+            console.log('Query', user, user.username);
+            var query = Fccuser.find({username: user.username});
+            query.sort({lastUpdate: 'asc'});
+            query.limit(1);
+            query.exec(function(err, user) {
+              if (err) {
+                 console.log('Error', err, user);  
+              }
+              else {
+                console.log('Delete', user[0].username, user[0]._id);
+                Fccuser.findById(user[0]._id).remove().exec();
+              }
+            });
+
+          });
+          res.json(results);
+        }
+    } );
+
+};
+
 // Creates a new fccuser in the DB.
 exports.load = function(req, res) {
 
