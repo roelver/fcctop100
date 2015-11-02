@@ -326,8 +326,8 @@ var doVerify = function(crit) {
                    return;
                 }
 
-                 // Forwarded to the FCC homepage???
-                if (html.indexOf("<title>Learn to Code and Build Projects for Nonprofits | Free Code Camp</title>") > 0) {
+                 // Forwarded to the FCC Map page with this title ???
+                if (html.indexOf("<title>A Map to Learn to Code") > 0) {
                    json.existing = false;
                    error = "404: Not found";
                    console.log(json.username + ' error:'+error);
