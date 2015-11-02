@@ -15,7 +15,7 @@
       	</th>
         </tr>
         <tr class="top100" ng-show="isLoggedIn()">
-          <td colspan="10">Following:&nbsp;&nbsp;<span ng-repeat="follow in me.followimg"><img ng-src="{{follow}}" class="userimg"/></span><button class="btn rank-btn" ng-click="getDataFollowing()" ng-hide="showingFollowing">Show Following</button><button class="btn rank-btn" ng-click="getDataRecent()" ng-show="showingFollowing">Show Top 100</button>
+          <td colspan="10">You're following:&nbsp;&nbsp;<span ng-repeat="follow in me.followimg"><img ng-src="{{follow}}" class="userimg"/></span><button class="btn rank-btn" ng-click="getDataFollowing()" ng-hide="showingFollowing">Show Following</button><button class="btn rank-btn" ng-click="getDataRecent()" ng-show="showingFollowing">Show Top 100</button>
           </td>
         </tr>
         <tr class="top100">
