@@ -327,7 +327,7 @@ var doVerify = function(crit) {
                 }
 
                  // Forwarded to the FCC Map page with this title ???
-                if (html.indexOf("<title>A Map to Learn to Code") > 0) {
+                if (html.toLowerCase().indexOf("<title>camper "+json.username.toLowerCase()) < 0) {
                    json.existing = false;
                    error = "404: Not found";
                    console.log(json.username + ' error:'+error);
