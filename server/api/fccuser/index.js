@@ -12,6 +12,7 @@ var router = express.Router();
 router.get('/', controller.index);
 router.get('/loadnew', controller.load);
 router.get('/update/all', controller.updateAll);
+router.get('/update/active', controller.updateActive);
 //router.get('/dedub', controller.deDouble);
 router.get('/update/:username', controller.verifyUser);
 router.get('/verify/error', controller.verifyError);

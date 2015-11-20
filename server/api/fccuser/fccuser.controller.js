@@ -261,6 +261,14 @@ exports.updateAll = function(req, res) {
    res.status(200).send('<h1>Verification started. Keep an eye on the logs</h1>').end();
 };
 
+// Updates an existing fccuser in the DB.
+exports.updateActive = function(req, res) {
+
+   var crit = {$and: [{existing: true}, {pointsRecent: {$gt: 0}}, {lastUpdate: {$lt: new Date((new Date())-1000*60*60*5)}}]};
+   setTimeout(doVerify, 100, crit);
+   res.status(200).send('<h1>Update active users started. Keep an eye on the logs</h1>').end();
+};
+
 //
 // Updates all users that were not updated because of an error
 //
