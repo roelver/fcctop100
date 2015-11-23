@@ -269,6 +269,31 @@ exports.updateActive = function(req, res) {
    res.status(200).send('<h1>Update active users started. Keep an eye on the logs</h1>').end();
 };
 
+// Updates an existing fccuser in the DB.
+exports.updateTop200 = function(req, res) {
+
+   var top200users = []; 
+   var query = Fccuser
+      .find({$and: [{existing: true}, {totalRecent: {$gt: 0}}]});
+   query.sort('-totalRecent -total -basejumpsRecent -ziplinesRecent -pointsRecent');
+   query.limit(200);
+   query.exec(function(err, fccusers) {
+      if (err) { return handleError(res, err); }
+      fccusers.forEach(function(user) {
+        top200users.push(user.username);
+      });
+      var aWhileAgo = new Date((new Date())-1000*60*6);
+      var crit = JSON.parse('{ "$and": [{"username": { "$in" : '+JSON.stringify(top200users)+'}}, {"lastUpdate": {"$lt": "'+aWhileAgo+'"}}]}');
+      console.log('Criterium:', crit);
+      setTimeout(doVerify, 100, crit);
+   });
+   res.status(200).send('<h1>Update top200 active users started. Keep an eye on the logs</h1>').end();
+};
+
+
+
+
+
 //
 // Updates all users that were not updated because of an error
 //
