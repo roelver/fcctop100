@@ -10,8 +10,15 @@ body {
     width: 100%;
 }
 .small-link {
-    font-size: 14px;
-    color: #aaa;
+    padding: 4px;
+    border-radius: 4px;
+    margin-left: 25px;
+    border: 1px solid #ffac33;
+    font-size: 16px;
+    color: #ffac33;
+}
+a.small-link:hover {
+    color: #fff;
 }
 .header {
 	margin-bottom: 30px;
