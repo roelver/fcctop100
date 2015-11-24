@@ -285,7 +285,6 @@ exports.updateTop500 = function(req, res) {
       console.log(top500users);
       var aWhileAgo = new Date((new Date())-1000*60*20);  // cool down to prevent that the same records will be updated over and over again 
       var crit = JSON.parse('{ "$and": [{"username": { "$in" : '+JSON.stringify(top500users)+'}}, {"lastUpdate": {"$lt": "'+aWhileAgo+'"}}]}');
-     // console.log('Criterium:', crit);
       setTimeout(doVerify, 100, crit);
    });
    res.status(200).send('<h1>Update top500 active users started. Keep an eye on the logs</h1>').end();
