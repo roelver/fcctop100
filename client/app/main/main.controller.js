@@ -15,6 +15,16 @@ angular.module('fccuserlistApp')
 
     $scope.isLoggedIn = $auth.isAuthenticated;
 
+// Sorting the table
+      $scope.predicate = 'totalRecent';
+      
+      $scope.reverse = true;
+      $scope.order = function(predicate) {
+        $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+        $scope.predicate = predicate;
+      };
+
+
     $scope.authenticate = function(provider) {
       $auth.authenticate(provider)
         .then($scope.getMe);

@@ -18,7 +18,7 @@ exports.top100alltime = function(req, res) {
    var query = Fccuser
       .find({total: {$gt:0}});
    query.sort('-total -basejumps -ziplines -points');
-   query.limit(100);
+   query.limit(500);
    query.exec(function(err, fccusers) {
       if (err) { return handleError(res, err); }
       return res.status(200).json(fccusers);
@@ -30,7 +30,7 @@ exports.top100recent = function(req, res) {
    var query = Fccuser
       .find({totalRecent: {$gt:0}});
    query.sort('-totalRecent -total -basejumpsRecent -ziplinesRecent -pointsRecent');
-   query.limit(100);
+   query.limit(500);
    query.exec(function(err, fccusers) {
       if (err) { return handleError(res, err); }
       return res.status(200).json(fccusers);

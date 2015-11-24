@@ -10,15 +10,20 @@ body {
     width: 100%;
 }
 .small-link {
-    padding: 4px;
+    padding: 5px;
     border-radius: 4px;
     margin-left: 25px;
     border: 1px solid #ffac33;
     font-size: 16px;
     color: #ffac33;
+    background-color: rgba(255,172,51,0.2);
+    right: 25px;
+    float: right;
+    top: 5px;
+    position: absolute;
 }
 a.small-link:hover {
-    color: #fff;
+    color: #ffac33;
 }
 .header {
 	margin-bottom: 30px;
@@ -40,6 +45,15 @@ a.small-link:hover {
     max-height: 40px;
     margin: 1px;
 }
+  .sortorder:after {
+    content: '\25b2';
+    font-size: 9px;
+  }
+  .sortorder.reverse:after {
+    content: '\25bc';
+    font-size: 9px;
+  }
+
 h5 {
     color: red;
     border: 1px solid red;
@@ -52,6 +66,12 @@ h5 {
 }
 tr.top100, th {
     font-size: 18px;
+}
+th {
+    background-color: #eef0ee;
+}
+th a, th a:hover {
+    color: #336033;
 }
 tr.top100 td {
     vertical-align: middle;
@@ -68,6 +88,12 @@ td.count {
 .lastchecked {
     width: 5%;
 }
+.numbercol {
+    width: 10%;
+}
+.idcol {
+    width: 3%;
+}
 .single {
 	float: right;
 }
@@ -79,7 +105,10 @@ td.count {
     color: #292f33 !important;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
-td.buttons, th.buttons {
+td.buttons.false, th.buttons.false {
+    width: 55px;
+}
+td.buttons.true, th.buttons.true {
     width: 100px;
 }
 .buttons {
