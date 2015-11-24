@@ -272,22 +272,23 @@ exports.updateActive = function(req, res) {
 // Updates an existing fccuser in the DB.
 exports.updateTop500 = function(req, res) {
 
-   var top200users = []; 
+   var top500users = []; 
    var query = Fccuser
-      .find({$and: [{existing: true}, {totalRecent: {$gt: 0}}]});
+      .find({$and: [{existing: true}, {totalRecent: {$gt: 10}}]});
    query.sort('-totalRecent -total -basejumpsRecent -ziplinesRecent -pointsRecent');
-   query.limit(200);
+   query.limit(500);
    query.exec(function(err, fccusers) {
       if (err) { return handleError(res, err); }
       fccusers.forEach(function(user) {
-        top200users.push(user.username);
+        top500users.push(user.username);
       });
+      console.log(top500users);
       var aWhileAgo = new Date((new Date())-1000*60*20);  // cool down to prevent that the same records will be updated over and over again 
-      var crit = JSON.parse('{ "$and": [{"username": { "$in" : '+JSON.stringify(top200users)+'}}, {"lastUpdate": {"$lt": "'+aWhileAgo+'"}}]}');
-      console.log('Criterium:', crit);
+      var crit = JSON.parse('{ "$and": [{"username": { "$in" : '+JSON.stringify(top500users)+'}}, {"lastUpdate": {"$lt": "'+aWhileAgo+'"}}]}');
+     // console.log('Criterium:', crit);
       setTimeout(doVerify, 100, crit);
    });
-   res.status(200).send('<h1>Update top200 active users started. Keep an eye on the logs</h1>').end();
+   res.status(200).send('<h1>Update top500 active users started. Keep an eye on the logs</h1>').end();
 };
 
 
