@@ -270,7 +270,7 @@ exports.updateActive = function(req, res) {
 };
 
 // Updates an existing fccuser in the DB.
-exports.updateTop200 = function(req, res) {
+exports.updateTop500 = function(req, res) {
 
    var top200users = []; 
    var query = Fccuser
@@ -282,7 +282,7 @@ exports.updateTop200 = function(req, res) {
       fccusers.forEach(function(user) {
         top200users.push(user.username);
       });
-      var aWhileAgo = new Date((new Date())-1000*60*6);
+      var aWhileAgo = new Date((new Date())-1000*60*20);  // cool down to prevent that the same records will be updated over and over again 
       var crit = JSON.parse('{ "$and": [{"username": { "$in" : '+JSON.stringify(top200users)+'}}, {"lastUpdate": {"$lt": "'+aWhileAgo+'"}}]}');
       console.log('Criterium:', crit);
       setTimeout(doVerify, 100, crit);
