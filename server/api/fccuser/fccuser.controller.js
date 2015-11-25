@@ -291,9 +291,6 @@ exports.updateTop500 = function(req, res) {
 };
 
 
-
-
-
 //
 // Updates all users that were not updated because of an error
 //

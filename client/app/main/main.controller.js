@@ -20,7 +20,7 @@ angular.module('fccuserlistApp')
 
       $scope.reverse = true;
       $scope.order = function(predicate) {
-        $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+        $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : true;
         $scope.predicate = predicate;
       };
 
@@ -37,6 +37,13 @@ angular.module('fccuserlistApp')
       })
     };
 
+    $scope.handleEnter = function($event){
+      var keyCode = $event.which || $event.keyCode;
+      if (keyCode === 13) {
+         $scope.getUserRanking();
+      }
+    };
+
     $scope.getDataRecent = function() {
 
       $scope.recentActivity = "recent activity from ";
@@ -44,10 +51,26 @@ angular.module('fccuserlistApp')
       $scope.onRecentPage = true;
       $scope.showingFollowing = false;
       $http.get('/api/fccusers/top100/recent').success(function(campers) {
-         $scope.order('totalRecent');
+         $scope.order($scope.newPredicate());
          $scope.reverse = true;
          $scope.campers = campers;
       });
+    };
+
+
+    $scope.newPredicate = function() {
+      if ($scope.predicate === 'username') return $scope.predicate;
+      if ($scope.predicate === 'totalRecent') return 'total';
+      if ($scope.predicate === 'total') return 'totalRecent';
+      if ($scope.predicate === 'pointsRecent') return 'points';
+      if ($scope.predicate === 'points') return 'pointsRecent';
+      if ($scope.predicate === 'basejumpsRecent') return 'basejumps';
+      if ($scope.predicate === 'basejumps') return 'basejumpsRecent';
+      if ($scope.predicate === 'ziplinesRecent') return 'ziplines';
+      if ($scope.predicate === 'ziplines') return 'ziplinesRecent';
+      if ($scope.predicate === 'bonfiresRecent') return 'bonfires';
+      if ($scope.predicate === 'bonfires') return 'bonfiresRecent';
+      return 'totalRecent';
     };
 
     $scope.getDataFollowing = function() {
@@ -65,7 +88,7 @@ angular.module('fccuserlistApp')
        $scope.singleUser = undefined;
        $scope.showingFollowing = false;
        $http.get('/api/fccusers/top100/alltime').success(function(campers) {
-         $scope.order('total');
+         $scope.order($scope.newPredicate());
          $scope.reverse = true;
          $scope.campers = campers;
        });
