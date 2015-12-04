@@ -16,7 +16,7 @@ angular.module('fccuserlistApp')
     $scope.isLoggedIn = $auth.isAuthenticated;
 
 // Sorting the table
-      $scope.predicate = 'total';
+      $scope.predicate = 'totalRecent';
 
       $scope.reverse = true;
       $scope.order = function(predicate) {
@@ -51,7 +51,7 @@ angular.module('fccuserlistApp')
       $scope.onRecentPage = true;
       $scope.showingFollowing = false;
       $http.get('/api/fccusers/top100/recent').success(function(campers) {
-         $scope.order($scope.newPredicate());
+    //     $scope.order($scope.newPredicate());
          $scope.reverse = true;
          $scope.campers = campers;
       });
