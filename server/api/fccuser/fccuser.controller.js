@@ -13,6 +13,34 @@ exports.index = function(req, res) {
     return res.status(200).send('<h1>Not Implemented</h1>');
 };
 
+exports.api500alltime = function(req, res) {
+
+   var query = Fccuser
+      .find({total: {$gt:0}});
+   query.sort('-points -basejumps -ziplines');
+   query.select('username img points pointsRecent ziplines ziplinesRecent basejumps '+
+                'basejumpsRecent waypoints waypointsRecent bonfires bonfiresRecent lastUpdate');
+   query.limit(500);
+   query.exec(function(err, users) {
+      if (err) { return handleError(res, err); }
+      return res.status(200).json(users);
+   });
+};
+
+exports.api500recent = function(req, res) {
+
+   var query = Fccuser
+      .find({totalRecent: {$gt:0}});
+   query.sort('-pointsRecent -basejumpsRecent -ziplinesRecent');
+   query.select('username img points pointsRecent ziplines ziplinesRecent basejumps '+
+                'basejumpsRecent waypoints waypointsRecent bonfires bonfiresRecent lastUpdate');
+   query.limit(500);
+   query.exec(function(err, users) {
+      if (err) { return handleError(res, err); }
+      return res.status(200).json(users);
+   });
+};
+
 exports.top100alltime = function(req, res) {
 
    var query = Fccuser
