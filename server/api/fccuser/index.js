@@ -23,7 +23,7 @@ router.get('/verify/update', controller.updateExpired);
 router.get('/following/recent/:meuser', ensureAuthenticated, controller.followingRecent);
 router.get('/recent', controller.api500recent);
 router.get('/top100/recent', controller.top100recent);
-router.get('/alltime', controller.api500altime);
+router.get('/alltime', controller.api500alltime);
 router.get('/top100/alltime', controller.top100alltime);
 router.get('/ranking-o/:username', controller.userRankingOverall);
 router.get('/ranking-r/:username', controller.userRankingRecent);
