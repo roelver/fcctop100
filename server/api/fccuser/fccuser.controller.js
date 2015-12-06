@@ -17,7 +17,7 @@ exports.api500alltime = function(req, res) {
 
    var query = Fccuser
       .find({total: {$gt:0}});
-   query.sort('-points -basejumps -ziplines');
+   query.sort('-total -points');
    query.select('username img points pointsRecent ziplines ziplinesRecent basejumps '+
                 'basejumpsRecent waypoints waypointsRecent bonfires bonfiresRecent lastUpdate');
    query.limit(500);
@@ -31,7 +31,7 @@ exports.api500recent = function(req, res) {
 
    var query = Fccuser
       .find({totalRecent: {$gt:0}});
-   query.sort('-pointsRecent -basejumpsRecent -ziplinesRecent');
+   query.sort('-totalRecent -pointsRecent');
    query.select('username img points pointsRecent ziplines ziplinesRecent basejumps '+
                 'basejumpsRecent waypoints waypointsRecent bonfires bonfiresRecent lastUpdate');
    query.limit(500);
