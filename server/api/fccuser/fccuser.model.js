@@ -19,6 +19,8 @@ var FccuserSchema = new Schema({
   bonfiresRecent: Number,
   total: Number,
   totalRecent: Number,
+  community: Number,
+  communityRecent: Number,
   lastUpdate: Date,
   following: [String]
 });

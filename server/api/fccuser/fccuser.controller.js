@@ -13,6 +13,36 @@ exports.index = function(req, res) {
     return res.status(200).send('<h1>Not Implemented</h1>');
 };
 
+exports.api100alltime = function(req, res) {
+
+    var sorton = (req.params.ascdesc.toLowerCase() === 'asc' ? '+' : '-')+req.params.sortcol;
+   var query = Fccuser
+      .find({total: {$gt:0}});
+   query.sort(sorton);
+   query.select('username img points ziplines basejumps '+
+                'waypoints bonfires community lastUpdate');
+   query.limit(100);
+   query.exec(function(err, users) {
+      if (err) { return handleError(res, err); }
+      return res.status(200).json(users);
+   });
+};
+
+exports.api100recent = function(req, res) {
+
+    var sorton = (req.params.ascdesc.toLowerCase() === 'asc' ? '+' : '-')+req.params.sortcol;
+   var query = Fccuser
+      .find({totalRecent: {$gt:0}});
+   query.sort(sorton);
+   query.select('username img pointsRecent ziplinesRecent basejumpsRecent '+
+                'waypointsRecent bonfiresRecent communityRecent lastUpdate');
+   query.limit(100);
+   query.exec(function(err, users) {
+      if (err) { return handleError(res, err); }
+      return res.status(200).json(users);
+   });
+};
+
 exports.api500alltime = function(req, res) {
 
    var query = Fccuser
@@ -364,12 +394,14 @@ var doVerify = function(crit) {
                          basejumps: 0, 
                          waypoints: 0, 
                          bonfires: 0,
+                         community: 0,
                          total: 0,
                          pointsRecent : 0, 
                          ziplinesRecent: 0, 
                          basejumpsRecent: 0, 
                          waypointsRecent: 0, 
                          bonfiresRecent: 0,
+                         communityRecent: 0,
                          totalRecent: 0,
                          lastUpdate: new Date()
                       };
@@ -459,6 +491,9 @@ var doVerify = function(crit) {
                 json.totalRecent = (json.basejumpsRecent * 60) + (json.ziplinesRecent * 30) 
                                   + (json.bonfiresRecent * 3) + json.pointsRecent;
                 json.total = (json.basejumps * 60) + (json.ziplines * 30) + (json.bonfires * 3) + json.points;
+                json.community = json.points - json.basejumps - json.ziplines - json.bonfires - json.waypoints;
+                json.communityRecent = json.pointsRecent - json.basejumpsRecent - 
+                               json.ziplinesRecent - json.bonfiresRecent - json.waypointsRecent;
                 store(json);
             });
 

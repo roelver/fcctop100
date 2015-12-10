@@ -21,15 +21,20 @@ router.get('/verify/username/:username', controller.getVerifiedUsername);
 router.get('/verify/new', controller.verifyNew);
 router.get('/verify/update', controller.updateExpired);
 router.get('/following/recent/:meuser', ensureAuthenticated, controller.followingRecent);
-router.get('/recent', controller.api500recent);
+//router.get('/recent', controller.api500recent);
 router.get('/top100/recent', controller.top100recent);
-router.get('/alltime', controller.api500alltime);
+//router.get('/alltime', controller.api500alltime);
 router.get('/top100/alltime', controller.top100alltime);
 router.get('/ranking-o/:username', controller.userRankingOverall);
 router.get('/ranking-r/:username', controller.userRankingRecent);
 
+// Support new API for Codepen
+router.get('/recent/:sortcol/:ascdesc', controller.api100recent);
+router.get('/alltime/:sortcol/:ascdesc', controller.api100alltime);
+
 router.put('/follow/:meuser/:followuser', ensureAuthenticated, controller.followUser);
 router.put('/unfollow/:meuser/:followuser', ensureAuthenticated, controller.unfollowUser);
+
 
 function ensureAuthenticated(req, res, next) {
   if (!req.headers.authorization) {
