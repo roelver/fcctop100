@@ -29,8 +29,8 @@ router.get('/ranking-o/:username', controller.userRankingOverall);
 router.get('/ranking-r/:username', controller.userRankingRecent);
 
 // Support new API for Codepen
-router.get('/recent/:sortcol/:ascdesc', controller.api100recent);
-router.get('/alltime/:sortcol/:ascdesc', controller.api100alltime);
+router.get('/recent/:sortcol', controller.api100recent);
+router.get('/alltime/:sortcol', controller.api100alltime);
 
 router.put('/follow/:meuser/:followuser', ensureAuthenticated, controller.followUser);
 router.put('/unfollow/:meuser/:followuser', ensureAuthenticated, controller.unfollowUser);

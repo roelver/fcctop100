@@ -15,11 +15,11 @@ exports.index = function(req, res) {
 
 exports.api100alltime = function(req, res) {
 
-    var sorton = (req.params.ascdesc.toLowerCase() === 'asc' ? '+' : '-')+req.params.sortcol;
+   var sorton = '-'+req.params.sortcol;
    var query = Fccuser
       .find({total: {$gt:0}});
    query.sort(sorton);
-   query.select('username img points ziplines basejumps '+
+   query.select('username img total points ziplines basejumps '+
                 'waypoints bonfires community lastUpdate');
    query.limit(100);
    query.exec(function(err, users) {
@@ -30,11 +30,11 @@ exports.api100alltime = function(req, res) {
 
 exports.api100recent = function(req, res) {
 
-    var sorton = (req.params.ascdesc.toLowerCase() === 'asc' ? '+' : '-')+req.params.sortcol;
+   var sorton = '-'+req.params.sortcol+"Recent";
    var query = Fccuser
       .find({totalRecent: {$gt:0}});
    query.sort(sorton);
-   query.select('username img pointsRecent ziplinesRecent basejumpsRecent '+
+   query.select('username img totalRecent pointsRecent ziplinesRecent basejumpsRecent '+
                 'waypointsRecent bonfiresRecent communityRecent lastUpdate');
    query.limit(100);
    query.exec(function(err, users) {
@@ -228,12 +228,14 @@ exports.load = function(req, res) {
                   waypoints: 0,
                   bonfires: 0,
                   basejumps: 0,
+                  community: 0,
                   total: 0,
                   pointsRecent: 0,
                   ziplinesRecent: 0,
                   waypointsRecent: 0,
                   bonfiresRecent: 0,
                   basejumpsRecent: 0,
+                  communityRecent: 0,
                   totalRecent: 0,
                   lastUpdate: new Date((new Date())-1000*60*60)
                };
