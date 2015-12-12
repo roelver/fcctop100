@@ -480,7 +480,8 @@ var doVerify = function(crit) {
                         json.bonfiresRecent++;
                       }
                   }
-                  if (challenge.title.toLowerCase().indexOf('waypoint') == 0) {
+                  if (challenge.title.toLowerCase().indexOf('waypoint') == 0
+                       && challenge.title.toLowerCase().indexOf('claim your') < 0) {  // don't count certificate claims
                       json.waypoints++;
                       if (challenge.date > threshold) {
                         json.waypointsRecent++;
@@ -525,10 +526,15 @@ var getRecentScores = function(html, json, threshold) {
 
 var getRecentPoints = function(heatmap, threshold) {
   var recentPoints = 0;
+  console.log('Threshold:'+ (threshold/1000));
   for (var key in heatmap) {
      if (heatmap.hasOwnProperty(key) && parseFloat(key) > (threshold/1000)) {
         recentPoints++;
-    }
+        console.log('Heat '+ key + ' was counted as recent');
+     }
+     else {
+        console.log('Heat '+ key + ' was ignored');
+     }
   }
   return recentPoints;
 };
