@@ -16,12 +16,8 @@ exports.index = function(req, res) {
 exports.api100alltime = function(req, res) {
 
    var sorton = '-'+req.params.sortcol;
-
-   var query = Fccuser.find({total: {$gt: 0}});
-   if (sorton === '-community') {
-      // exclude users that have hidden their results on the FCC user page
-      query = Fccuser.find({$and: [{basejumps: {$gt:0}}, {ziplines: {$gt:0}},{bonfires: {$gt:0}},{waypoints: {$gt:0}}]});
-   }
+   // assume that users hiding their results, don't want to be listed in the top100
+   var query = Fccuser.find({$and: [{basejumps: {$gt:0}}, {ziplines: {$gt:0}},{bonfires: {$gt:0}},{waypoints: {$gt:0}}]});
    query.sort(sorton);
    query.select('username img total points ziplines basejumps '+
                 'waypoints bonfires community lastUpdate');
@@ -35,12 +31,8 @@ exports.api100alltime = function(req, res) {
 exports.api100recent = function(req, res) {
 
    var sorton = '-'+req.params.sortcol+"Recent";
-   var query = Fccuser
-      .find({totalRecent: {$gt:0}});
-   if (sorton === '-communityRecent') {
-      // exclude users that have hidden theie results on the FCC user page
-      query = Fccuser.find({$and: [{basejumps: {$gt:0}}, {ziplines: {$gt:0}},{bonfires: {$gt:0}},{waypoints: {$gt:0}}]});
-   }
+   // assume that users hiding their results, don't want to be listed in the top100
+   var query = Fccuser.find({$and: [{basejumps: {$gt:0}}, {ziplines: {$gt:0}},{bonfires: {$gt:0}},{waypoints: {$gt:0}}]});
    query.sort(sorton);
    query.select('username img totalRecent pointsRecent ziplinesRecent basejumpsRecent '+
                 'waypointsRecent bonfiresRecent communityRecent lastUpdate');
