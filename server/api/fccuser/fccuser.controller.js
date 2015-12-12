@@ -17,7 +17,7 @@ exports.api100alltime = function(req, res) {
 
    var sorton = '-'+req.params.sortcol;
    // assume that users hiding their results, don't want to be listed in the top100
-   var query = Fccuser.find({$and: [{basejumps: {$gt:0}}, {ziplines: {$gt:0}},{bonfires: {$gt:0}},{waypoints: {$gt:0}}]});
+   var query = Fccuser.find({$or: [{basejumps: {$gt:0}}, {ziplines: {$gt:0}},{bonfires: {$gt:0}},{waypoints: {$gt:0}}]});
    query.sort(sorton);
    query.select('username img total points ziplines basejumps '+
                 'waypoints bonfires community lastUpdate');
@@ -32,7 +32,7 @@ exports.api100recent = function(req, res) {
 
    var sorton = '-'+req.params.sortcol+"Recent";
    // assume that users hiding their results, don't want to be listed in the top100
-   var query = Fccuser.find({$and: [{basejumps: {$gt:0}}, {ziplines: {$gt:0}},{bonfires: {$gt:0}},{waypoints: {$gt:0}}]});
+   var query = Fccuser.find({$or: [{basejumps: {$gt:0}}, {ziplines: {$gt:0}},{bonfires: {$gt:0}},{waypoints: {$gt:0}}]});
    query.sort(sorton);
    query.select('username img totalRecent pointsRecent ziplinesRecent basejumpsRecent '+
                 'waypointsRecent bonfiresRecent communityRecent lastUpdate');
@@ -526,14 +526,9 @@ var getRecentScores = function(html, json, threshold) {
 
 var getRecentPoints = function(heatmap, threshold) {
   var recentPoints = 0;
-  console.log('Threshold:'+ (threshold/1000));
   for (var key in heatmap) {
      if (heatmap.hasOwnProperty(key) && parseFloat(key) > (threshold/1000)) {
         recentPoints++;
-        console.log('Heat '+ key + ' was counted as recent');
-     }
-     else {
-        console.log('Heat '+ key + ' was ignored');
      }
   }
   return recentPoints;
