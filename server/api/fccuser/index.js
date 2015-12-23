@@ -32,6 +32,9 @@ router.get('/ranking-r/:username', controller.userRankingRecent);
 router.get('/recent/:sortcol', controller.api100recent);
 router.get('/alltime/:sortcol', controller.api100alltime);
 
+router.get('/top/recent', controller.topRecent);
+router.get('/top/alltime', controller.topAlltime);
+
 router.put('/follow/:meuser/:followuser', ensureAuthenticated, controller.followUser);
 router.put('/unfollow/:meuser/:followuser', ensureAuthenticated, controller.unfollowUser);
 

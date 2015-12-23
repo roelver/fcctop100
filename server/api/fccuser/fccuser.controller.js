@@ -13,6 +13,14 @@ exports.index = function(req, res) {
     return res.status(200).send('<h1>Not Implemented</h1>');
 };
 
+exports.topRecent = function(req, res) {
+  return topSimple(req, res, 'communityRecent');
+};
+
+exports.topAlltime = function(req, res) {
+  return topSimple(req, res, 'community');
+};
+
 exports.api100alltime = function(req, res) {
 
    var sorton = '-'+req.params.sortcol;
@@ -511,6 +519,22 @@ var getPoints = function(data) {
       var start = points.indexOf('[ ')+2;
       var end = points.indexOf(' ]');
       return parseInt(points.substring(start,end));
+};
+
+/*
+ * Return data for the FCC zipline
+ */
+var topSimple = function(req, res, sortcol) {
+
+   // assume that users hiding their results, don't want to be listed in the top100
+   var query = Fccuser.find({$or: [{basejumps: {$gt:0}}, {ziplines: {$gt:0}},{bonfires: {$gt:0}},{waypoints: {$gt:0}}]});
+   query.sort('-'+sortcol);
+   query.select('username img community communityRecent lastUpdate');
+   query.limit(100);
+   query.exec(function(err, users) {
+      if (err) { return handleError(res, err); }
+      return res.status(200).json(users);
+   });
 };
 
 var getRecentScores = function(html, json, threshold) {
