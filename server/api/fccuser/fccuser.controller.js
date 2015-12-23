@@ -533,7 +533,10 @@ var topSimple = function(req, res, sortcol) {
    query.limit(100);
    query.exec(function(err, users) {
       if (err) { return handleError(res, err); }
-      return res.status(200).json(users);
+      var output = users.map(function(user) {
+          delete user._id;
+      });
+      return res.status(200).json(output);
    });
 };
 
