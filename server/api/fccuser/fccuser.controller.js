@@ -537,7 +537,11 @@ var topSimple = function(req, res, sortcol) {
    query.exec(function(err, users) {
       if (err) { return handleError(res, err); }
       var output = users.map(function(user) {
+          user["alltime"] = user.community;
+          user["recent"] = user.communityRecent;
           user["_id"] = undefined;
+          user["community"] = undefined;
+          user["communityRecent"] = undefined;
           return user;
       });
       return res.status(200).json(output);
