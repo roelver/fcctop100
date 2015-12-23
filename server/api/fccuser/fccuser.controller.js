@@ -527,14 +527,18 @@ var getPoints = function(data) {
 var topSimple = function(req, res, sortcol) {
 
    // assume that users hiding their results, don't want to be listed in the top100
-   var query = Fccuser.find({$or: [{basejumps: {$gt:0}}, {ziplines: {$gt:0}},{bonfires: {$gt:0}},{waypoints: {$gt:0}}]});
+   var query = Fccuser.find({$or: [{basejumps: {$gt:0}}, 
+                                   {ziplines: {$gt:0}},
+                                   {bonfires: {$gt:0}},
+                                   {waypoints: {$gt:0}}]});
    query.sort('-'+sortcol);
    query.select('username img community communityRecent lastUpdate');
    query.limit(100);
    query.exec(function(err, users) {
       if (err) { return handleError(res, err); }
       var output = users.map(function(user) {
-          delete user._id;
+          user["_id"] = undefined;
+          return user;
       });
       return res.status(200).json(output);
    });
