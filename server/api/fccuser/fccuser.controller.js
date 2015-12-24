@@ -217,43 +217,47 @@ exports.deDouble = function(req, res) {
 
 };
 
+var addFccUser = function(username, idx) {
+
+   var newUser = {
+      username: username,
+      existing: true,   // benefit of the doubt
+      points: 0,
+      ziplines: 0,
+      waypoints: 0,
+      bonfires: 0,
+      basejumps: 0,
+      community: 0,
+      total: 0,
+      pointsRecent: 0,
+      ziplinesRecent: 0,
+      waypointsRecent: 0,
+      bonfiresRecent: 0,
+      basejumpsRecent: 0,
+      communityRecent: 0,
+      totalRecent: 0,
+      lastUpdate: new Date((new Date())-1000*60*60)
+   };
+
+   Fccuser.findOne ({username: username}, function(err, data) {
+      if(err) { console.log(err); return handleError(res, err); }
+      if (!data) {
+        Fccuser.create(newUser, function(err, data) {
+           console.log('Added new user:'+username);
+           setTimeout(updateUser, (200*idx), username);
+        });
+      }
+      else {
+           console.log('User existed: '+username);        
+      }
+    //  updateUser(data.username);
+   });
+};
+  
+
+
 // Creates a new fccuser in the DB.
 exports.load = function(req, res) {
-
-  var addFccUser = function(username) {
-        // return a function here
-        return function(err, fccusers) {
-
-            if (err) { return handleError(res, err); }
-
-            if (!fccusers || fccusers.length == 0) { 
-               console.log('Adding user:'+username);
-               var newUser = {
-                  username: username,
-                  existing: true,   // benefit of the doubt
-                  points: 0,
-                  ziplines: 0,
-                  waypoints: 0,
-                  bonfires: 0,
-                  basejumps: 0,
-                  community: 0,
-                  total: 0,
-                  pointsRecent: 0,
-                  ziplinesRecent: 0,
-                  waypointsRecent: 0,
-                  bonfiresRecent: 0,
-                  basejumpsRecent: 0,
-                  communityRecent: 0,
-                  totalRecent: 0,
-                  lastUpdate: new Date((new Date())-1000*60*60)
-               };
-               Fccuser.create(newUser, function(err, data) {
-                  if(err) { console.log(err); return handleError(res, err); }
-                //  updateUser(data.username);
-               });
-            }
-        };
-     };
 
   var total = 0;
 
@@ -278,7 +282,7 @@ exports.load = function(req, res) {
       Fccuser.find().count(function(err, count) {
 
           for (var i=count; i< users.length; i++) {
-              Fccuser.find({username: users[i].username}, addFccUser(users[i].username));
+              addFccUser(users[i].username, 20);
           }
           res.writeHead(200, {
             "Content-Type": "text/html"
@@ -296,6 +300,73 @@ exports.load = function(req, res) {
   setTimeout(doVerify, 60000, crit);
 
 };
+
+
+// Creates a new fccuser in the DB.
+exports.loadInChunks = function(req, res) {
+
+  setTimeout(loadNextChunk, 0, 0, 0, -1);
+  return res.status(200).send('<h1>Refresh in chunks is started. Keep an eye on the logs.</h1>');
+};
+
+var loadNextChunk = function(charIdx1, charIdx2, charIdx3) {
+
+  var chars = "0123456789abcdefghijklmnopqrstuvwxyz";
+  var opts = {
+    host: 'gitter.im',
+    method: 'GET',
+    path: '/api/v1/rooms/546fd572db8155e6700d6eaf/users?access_token=f1670594b8b9cd40d03f724d989f7d1840530219&limit=125&q='+
+        chars[charIdx1]+chars[charIdx2]+(charIdx3 >=0 ? chars[charIdx3] : "")
+  };
+
+  console.log("Load users for prefix "+chars[charIdx1]+chars[charIdx2]+(charIdx3 >=0 ? chars[charIdx3] : ""));
+  var req = https.request(opts, function(resp) {
+    resp.setEncoding('utf-8');
+
+    var responseString = '';
+
+    resp.on('data', function(data) {
+      responseString += data;
+    });
+
+    resp.on('end', function() {
+
+      var users = JSON.parse(responseString);
+      console.log("Response length", users.length);
+      if (users.length <= 30 || charIdx3 >=0) {
+         for (var i=0; i< users.length; i++) {
+           addFccUser(users[i].username);
+         }
+         if (charIdx3 >= 0) {
+             charIdx3++
+         }
+      }
+      else {
+         charIdx3 = 0;
+         console.log("Activating 3rd criterium");
+      }
+      if (charIdx3 >= chars.length || charIdx3 < 0) {
+        charIdx2++;
+        charIdx3 = -1;
+      }
+
+      if (charIdx2 >= chars.length) {
+        charIdx2 = 0;
+        charIdx1++;
+      }
+      if (charIdx1 < chars.length) {
+        // submit for next chunk after 15 secs
+        console.log("Submit next chunk after "+(charIdx3 >= 0 ? "5": "10")+" seconds");
+        setTimeout(loadNextChunk, (charIdx3 >= 0 ? 5000: 10000), charIdx1, charIdx2, charIdx3);
+      }
+
+    });
+  });
+
+  req.end();
+
+};
+
 
 // Updates an existing fccuser in the DB.
 exports.verifyUser = function(req, res) {
@@ -390,7 +461,9 @@ var doVerify = function(crit) {
    query.exec(function (err, fccusers) {
       
       if (fccusers && fccusers.length > 0) {
-        console.log('Processing batch with ',fccusers.length,'users' );
+        if (fccusers.length > 1) {
+           console.log('Processing batch with',fccusers.length,'users' );
+        }
         fccusers.forEach( function(fccusr) {
 
             var baseUrl = 'http://www.freecodecamp.com/'+fccusr.username;

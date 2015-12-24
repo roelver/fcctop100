@@ -11,6 +11,7 @@ var router = express.Router();
 
 router.get('/', controller.index);
 router.get('/loadnew', controller.load);
+router.get('/loadchunks', controller.loadInChunks);
 router.get('/update/all', controller.updateAll);
 router.get('/update/active', controller.updateActive);
 router.get('/update/top', controller.updateTop500);
