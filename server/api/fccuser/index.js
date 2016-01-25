@@ -36,17 +36,17 @@ router.get('/ranking-r/:username', controller.userRankingRecent);
 //router.get('/alltime/:sortcol', controller.api100alltime);
 
 // Optimized for help API on Codepen
-//router.get('/top/recent', controller.topRecent);
-//router.get('/top/alltime', controller.topAlltime);
+router.get('/top/recent', controller.topRecent);
+router.get('/top/alltime', controller.topAlltime);
 
 
 /// FIX for FCC zipline: Swap the optimized API with the sortcolumn
-router.get('/recent/:sortcol', controller.topRecent);
-router.get('/alltime/:sortcol', controller.topAlltime);
+router.get('/recent/:sortcol', controller.api100recent);
+router.get('/alltime/:sortcol', controller.api100alltime);
 
 // Optimized for help API on Codepen
-router.get('/top/recent', controller.api100recent);
-router.get('/top/alltime', controller.api100alltime);
+//router.get('/top/recent', controller.api100recent);
+//router.get('/top/alltime', controller.api100alltime);
 
 
 router.put('/follow/:meuser/:followuser', ensureAuthenticated, controller.followUser);
