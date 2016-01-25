@@ -10,8 +10,10 @@ var moment = require('moment');
 var router = express.Router();
 
 router.get('/', controller.index);
-router.get('/loadnew', controller.load);
-router.get('/loadchunks', controller.loadInChunks);
+
+router.get('/loadall', controller.loadInChunks);
+router.get('/loadmore', controller.loadMore);
+
 router.get('/update/all', controller.updateAll);
 router.get('/update/active', controller.updateActive);
 router.get('/update/top', controller.updateTop500);
@@ -30,11 +32,22 @@ router.get('/ranking-o/:username', controller.userRankingOverall);
 router.get('/ranking-r/:username', controller.userRankingRecent);
 
 // Support new API for Codepen
-router.get('/recent/:sortcol', controller.api100recent);
-router.get('/alltime/:sortcol', controller.api100alltime);
+//router.get('/recent/:sortcol', controller.api100recent);
+//router.get('/alltime/:sortcol', controller.api100alltime);
 
-router.get('/top/recent', controller.topRecent);
-router.get('/top/alltime', controller.topAlltime);
+// Optimized for help API on Codepen
+//router.get('/top/recent', controller.topRecent);
+//router.get('/top/alltime', controller.topAlltime);
+
+
+/// FIX for FCC zipline: Swap the optimized API with the sortcolumn
+router.get('/recent/:sortcol', controller.topRecent);
+router.get('/alltime/:sortcol', controller.topAlltime);
+
+// Optimized for help API on Codepen
+router.get('/top/recent', controller.api100recent);
+router.get('/top/alltime', controller.api100alltime);
+
 
 router.put('/follow/:meuser/:followuser', ensureAuthenticated, controller.followUser);
 router.put('/unfollow/:meuser/:followuser', ensureAuthenticated, controller.unfollowUser);

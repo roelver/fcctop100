@@ -64,12 +64,10 @@ angular.module('fccuserlistApp')
       if ($scope.predicate === 'total') return 'totalRecent';
       if ($scope.predicate === 'pointsRecent') return 'points';
       if ($scope.predicate === 'points') return 'pointsRecent';
-      if ($scope.predicate === 'basejumpsRecent') return 'basejumps';
-      if ($scope.predicate === 'basejumps') return 'basejumpsRecent';
-      if ($scope.predicate === 'ziplinesRecent') return 'ziplines';
-      if ($scope.predicate === 'ziplines') return 'ziplinesRecent';
-      if ($scope.predicate === 'bonfiresRecent') return 'bonfires';
-      if ($scope.predicate === 'bonfires') return 'bonfiresRecent';
+      if ($scope.predicate === 'projectsRecent') return 'projects';
+      if ($scope.predicate === 'projects') return 'projectsRecent';
+      if ($scope.predicate === 'algorithmsRecent') return 'algorithms';
+      if ($scope.predicate === 'algorithms') return 'algorithmsRecent';
       return 'totalRecent';
     };
 

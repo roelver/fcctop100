@@ -25,10 +25,10 @@ exports.api100alltime = function(req, res) {
 
    var sorton = '-'+req.params.sortcol;
    // assume that users hiding their results, don't want to be listed in the top100
-   var query = Fccuser.find({$or: [{basejumps: {$gt:0}}, {ziplines: {$gt:0}},{bonfires: {$gt:0}},{waypoints: {$gt:0}}]});
+   var query = Fccuser.find({$or: [{projects: {$gt:0}},{algorithms: {$gt:0}},{challenges: {$gt:0}}]});
    query.sort(sorton);
-   query.select('username img total points ziplines basejumps '+
-                'waypoints bonfires community lastUpdate');
+   query.select('username img total points projects '+
+                'challenges algorithms community lastUpdate');
    query.limit(100);
    query.exec(function(err, users) {
       if (err) { return handleError(res, err); }
@@ -40,10 +40,10 @@ exports.api100recent = function(req, res) {
 
    var sorton = '-'+req.params.sortcol+"Recent";
    // assume that users hiding their results, don't want to be listed in the top100
-   var query = Fccuser.find({$or: [{basejumps: {$gt:0}}, {ziplines: {$gt:0}},{bonfires: {$gt:0}},{waypoints: {$gt:0}}]});
+   var query = Fccuser.find({$or: [{projects: {$gt:0}}, {algorithms: {$gt:0}},{challenges: {$gt:0}}]});
    query.sort(sorton);
-   query.select('username img totalRecent pointsRecent ziplinesRecent basejumpsRecent '+
-                'waypointsRecent bonfiresRecent communityRecent lastUpdate');
+   query.select('username img totalRecent pointsRecent projectsRecent '+
+                'challengesRecent algorithmsRecent communityRecent lastUpdate');
    query.limit(100);
    query.exec(function(err, users) {
       if (err) { return handleError(res, err); }
@@ -56,8 +56,8 @@ exports.api500alltime = function(req, res) {
    var query = Fccuser
       .find({total: {$gt:0}});
    query.sort('-total -points');
-   query.select('username img points pointsRecent ziplines ziplinesRecent basejumps '+
-                'basejumpsRecent waypoints waypointsRecent bonfires bonfiresRecent lastUpdate');
+   query.select('username img points pointsRecent projects '+
+                'projectsRecent challenges challengesRecent algorithms algorithmsRecent lastUpdate');
    query.limit(500);
    query.exec(function(err, users) {
       if (err) { return handleError(res, err); }
@@ -70,8 +70,8 @@ exports.api500recent = function(req, res) {
    var query = Fccuser
       .find({totalRecent: {$gt:0}});
    query.sort('-totalRecent -pointsRecent');
-   query.select('username img points pointsRecent ziplines ziplinesRecent basejumps '+
-                'basejumpsRecent waypoints waypointsRecent bonfires bonfiresRecent lastUpdate');
+   query.select('username img points pointsRecent projects '+
+                'projectsRecent challenges challengesRecent algorithms algorithmsRecent lastUpdate');
    query.limit(500);
    query.exec(function(err, users) {
       if (err) { return handleError(res, err); }
@@ -83,7 +83,7 @@ exports.top100alltime = function(req, res) {
 
    var query = Fccuser
       .find({total: {$gt:0}});
-   query.sort('-total -basejumps -ziplines -points');
+   query.sort('-total -projects -points');
    query.limit(500);
    query.exec(function(err, fccusers) {
       if (err) { return handleError(res, err); }
@@ -95,7 +95,7 @@ exports.top100recent = function(req, res) {
 
    var query = Fccuser
       .find({totalRecent: {$gt:0}});
-   query.sort('-totalRecent -total -basejumpsRecent -ziplinesRecent -pointsRecent');
+   query.sort('-totalRecent -total -projectsRecent -pointsRecent');
    query.limit(500);
    query.exec(function(err, fccusers) {
       if (err) { return handleError(res, err); }
@@ -114,7 +114,7 @@ exports.followingRecent = function(req, res) {
 
       var query = Fccuser
         .find({username: {$in: following}});
-      query.sort('-totalRecent -total -basejumpsRecent -ziplinesRecent -pointsRecent');
+      query.sort('-totalRecent -total -projectsRecent -pointsRecent');
       query.exec(function(err, fccusers) {
           if (err) { return handleError(res, err); }
           return res.status(200).json(fccusers);
@@ -223,17 +223,15 @@ var addFccUser = function(username, idx) {
       username: username,
       existing: true,   // benefit of the doubt
       points: 0,
-      ziplines: 0,
-      waypoints: 0,
-      bonfires: 0,
-      basejumps: 0,
+      challenges: 0,
+      algorithms: 0,
+      projects: 0,
       community: 0,
       total: 0,
       pointsRecent: 0,
-      ziplinesRecent: 0,
-      waypointsRecent: 0,
-      bonfiresRecent: 0,
-      basejumpsRecent: 0,
+      challengesRecent: 0,
+      algorithmsRecent: 0,
+      projectsRecent: 0,
       communityRecent: 0,
       totalRecent: 0,
       lastUpdate: new Date((new Date())-1000*60*60)
@@ -255,71 +253,35 @@ var addFccUser = function(username, idx) {
 };
   
 
+// Load all users from the chat.
+exports.loadMore = function(req, res) {
 
-// Creates a new fccuser in the DB.
-exports.load = function(req, res) {
+   Fccuser.find().count().exec(function (err, count) {
+      if (err) return handleError(res, err);
+      setTimeout(loadNextChunk, 0, count, 30);
 
-  var total = 0;
-
-  var opts = {
-    host: 'gitter.im',
-    method: 'GET',
-    path: '/api/v1/rooms/546fd572db8155e6700d6eaf/users?access_token=f1670594b8b9cd40d03f724d989f7d1840530219'
-  };
-  var req = https.request(opts, function(resp) {
-    resp.setEncoding('utf-8');
-
-    var responseString = '';
-
-    resp.on('data', function(data) {
-      responseString += data;
+      return res.status(200).send('<h1>Loading new users from chat starting from '+count+'. Keep an eye on the logs.</h1>');
     });
-
-    console.log('Processing User Data from Chat');
-    resp.on('end', function() {
-
-      var users = JSON.parse(responseString);
-      Fccuser.find().count(function(err, count) {
-
-          for (var i=count; i< users.length; i++) {
-              addFccUser(users[i].username, 20);
-          }
-          res.writeHead(200, {
-            "Content-Type": "text/html"
-          });
-          res.write('<h1>Processed '+count+' records</h1>');
-          res.end();
-
-      });
-    });
-  });
-
-  req.end();
-  // Start processing the new users in 1 minute
-  var crit = {$or: [{img: { "$exists": false}}, {$and: [{img: {"$exists": true}},{img: ""},{existing: true}]}]};
-  setTimeout(doVerify, 60000, crit);
 
 };
 
-
-// Creates a new fccuser in the DB.
+// Load all users from the chat.
 exports.loadInChunks = function(req, res) {
 
-  setTimeout(loadNextChunk, 0, 0, 0, -1);
-  return res.status(200).send('<h1>Refresh in chunks is started. Keep an eye on the logs.</h1>');
+  setTimeout(loadNextChunk, 0, 0, 30);
+  return res.status(200).send('<h1>Refresh all users in chunks is started. Keep an eye on the logs.</h1>');
 };
 
-var loadNextChunk = function(charIdx1, charIdx2, charIdx3) {
+var loadNextChunk = function(skip, limit) {
 
-  var chars = "0123456789abcdefghijklmnopqrstuvwxyz";
   var opts = {
     host: 'gitter.im',
     method: 'GET',
-    path: '/api/v1/rooms/546fd572db8155e6700d6eaf/users?access_token=f1670594b8b9cd40d03f724d989f7d1840530219&limit=125&q='+
-        chars[charIdx1]+chars[charIdx2]+(charIdx3 >=0 ? chars[charIdx3] : "")
+    path: '/api/v1/rooms/546fd572db8155e6700d6eaf/users?access_token=f1670594b8b9cd40d03f724d989f7d1840530219'+
+    '&limit='+limit+'&skip='+skip  
   };
 
-  console.log("Load users for prefix "+chars[charIdx1]+chars[charIdx2]+(charIdx3 >=0 ? chars[charIdx3] : ""));
+  console.log("Loading next chunk of "+limit+" users after skipping " + skip);
   var req = https.request(opts, function(resp) {
     resp.setEncoding('utf-8');
 
@@ -332,33 +294,10 @@ var loadNextChunk = function(charIdx1, charIdx2, charIdx3) {
     resp.on('end', function() {
 
       var users = JSON.parse(responseString);
-      console.log("Response length", users.length);
-      if (users.length <= 30 || charIdx3 >=0) {
-         for (var i=0; i< users.length; i++) {
+      for (var i=0; i< users.length; i++) {
            addFccUser(users[i].username);
-         }
-         if (charIdx3 >= 0) {
-             charIdx3++
-         }
       }
-      else {
-         charIdx3 = 0;
-         console.log("Activating 3rd criterium");
-      }
-      if (charIdx3 >= chars.length || charIdx3 < 0) {
-        charIdx2++;
-        charIdx3 = -1;
-      }
-
-      if (charIdx2 >= chars.length) {
-        charIdx2 = 0;
-        charIdx1++;
-      }
-      if (charIdx1 < chars.length) {
-        // submit for next chunk after 15 secs
-        console.log("Submit next chunk after "+(charIdx3 >= 0 ? "5": "10")+" seconds");
-        setTimeout(loadNextChunk, (charIdx3 >= 0 ? 5000: 10000), charIdx1, charIdx2, charIdx3);
-      }
+      setTimeout(loadNextChunk, 20000, (skip+limit), limit);
 
     });
   });
@@ -414,7 +353,7 @@ exports.updateTop500 = function(req, res) {
    var top500users = []; 
    var query = Fccuser
       .find({$and: [{existing: true}, {totalRecent: {$gt: 10}}]});
-   query.sort('-totalRecent -total -basejumpsRecent -ziplinesRecent -pointsRecent');
+   query.sort('-totalRecent -total -projectsRecent -pointsRecent');
    query.limit(500);
    query.exec(function(err, fccusers) {
       if (err) { return handleError(res, err); }
@@ -473,17 +412,15 @@ var doVerify = function(crit) {
                          img: '', 
                          existing : true, 
                          points : 0, 
-                         ziplines: 0, 
-                         basejumps: 0, 
-                         waypoints: 0, 
-                         bonfires: 0,
+                         projects: 0, 
+                         algorithms: 0, 
+                         challenges: 0,
                          community: 0,
                          total: 0,
                          pointsRecent : 0, 
-                         ziplinesRecent: 0, 
-                         basejumpsRecent: 0, 
-                         waypointsRecent: 0, 
-                         bonfiresRecent: 0,
+                         projectsRecent: 0, 
+                         algorithmsRecent: 0, 
+                         challengesRecent: 0,
                          communityRecent: 0,
                          totalRecent: 0,
                          lastUpdate: new Date()
@@ -521,63 +458,67 @@ var doVerify = function(crit) {
 
                 var threshold = new Date().getTime() - 30*24*60*60*1000;
 
-                var challenges = [];
-                $('.table-striped tr').filter(function(){
-                   var row = $(this)['0'];
-                   var rowdata = {};
-                   if (row.children[0].children[0].data == undefined) {
-                      if (row.children[0].children[0].children[0]) {
-                          rowdata.title = row.children[0].children[0].children[0].data;
+                $('table.table-striped').filter(function(){
+                   var table = $(this)['0'];
+                 //  console.log("Table",table);
+                   var title = table.children[0].children[0].children[0].children[0].data;
+                   var isProjects = (title === "Projects");
+                   var isAlgorithms = (title === "Algorithms");
+                   var isChallenges = (title === "Challenges");
+                   var all = [];
+                   for (var i=1;i < table.children.length; i++) {
+                      var rowdata = {};
+                      if (isProjects) {
+                        rowdata.title = table.children[i].children[0].children[0].children[0].data;
                       }
                       else {
-                        rowdata.title = "What!?! "+json.username;
+                        rowdata.title = table.children[i].children[0].children[0].data;
                       }
-                   }
-                   else {
-                      rowdata.title = row.children[0].children[0].data;
-                   }
-                   rowdata.date = Date.parse(row.children[1].children[0].data);
-                   challenges.push(rowdata);
+                      rowdata.recent = (Date.parse(table.children[i].children[1].children[0].data) > threshold);
+                      all.push(rowdata);
+                    }
+                    var allUnique = getUnique(all);
+                    for (var i=0; i < allUnique.length; i++) {
+                      if (isProjects) {
+                        json.projects++;
+                        if (allUnique[i].recent) {
+                          json.projectsRecent++;
+                        }
+                      }
+                      if (isAlgorithms) {
+                        json.algorithms++;
+                        if (allUnique[i].recent) {
+                          json.algorithmsRecent++;
+                        }
+                      }
+
+                      if (isChallenges) {
+                        json.challenges++;
+                        if (allUnique[i].recent) {
+                          json.challengesRecent++;
+                        }
+                      }
+
+                    }
+
                 });
-
-                var uniqueChallenges = getUnique(challenges);
-
-                uniqueChallenges.forEach(function(challenge) {
-                  if (challenge.title.toLowerCase().indexOf('basejump') == 0) {
-                      json.basejumps++;
-                      if (challenge.date > threshold) {
-                        json.basejumpsRecent++;
-                      }
-                  }
-                  if (challenge.title.toLowerCase().indexOf('zipline') == 0) {
-                      json.ziplines++;
-                      if (challenge.date > threshold) {
-                        json.ziplinesRecent++;
-                      }
-                  }
-                  if (challenge.title.toLowerCase().indexOf('bonfire') == 0) {
-                      json.bonfires++;
-                      if (challenge.date > threshold) {
-                        json.bonfiresRecent++;
-                      }
-                  }
-                  if (challenge.title.toLowerCase().indexOf('waypoint') == 0
-                       && challenge.title.toLowerCase().indexOf('claim your') < 0) {  // don't count certificate claims
-                      json.waypoints++;
-                      if (challenge.date > threshold) {
-                        json.waypointsRecent++;
-                      }
-                  }
-                }); 
 
                 getRecentScores(html, json, threshold);
         
-                json.totalRecent = (json.basejumpsRecent * 60) + (json.ziplinesRecent * 30) 
-                                  + (json.bonfiresRecent * 3) + json.pointsRecent;
-                json.total = (json.basejumps * 60) + (json.ziplines * 30) + (json.bonfires * 3) + json.points;
-                json.community = json.points - json.basejumps - json.ziplines - json.bonfires - json.waypoints;
-                json.communityRecent = json.pointsRecent - json.basejumpsRecent - 
-                               json.ziplinesRecent - json.bonfiresRecent - json.waypointsRecent;
+                json.totalRecent = (json.projectsRecent * 50) +
+                                  + (json.algorithmsRecent * 5) + json.pointsRecent;
+                json.total = (json.projects * 50) + (json.algorithms * 5) + json.points;
+                json.community = json.points - json.projects - json.algorithms - json.challenges;
+                json.communityRecent = json.pointsRecent - json.projectsRecent - json.algorithmsRecent - json.challengesRecent;
+
+                console.log("Projects:"+json.projectsRecent+'/'+json.projects+
+                           "\nAlgorithms:"+json.algorithmsRecent+'/'+json.algorithms+
+                            "\nChallenges:"+json.challengesRecent+'/'+json.challenges+
+                            "\nPoints:"+json.pointsRecent+'/'+json.points+
+                            "\nCommunity:"+json.communityRecent+'/'+json.community+
+                            "\nTotal:"+json.totalRecent+'/'+json.total
+                            );
+
                 store(json);
             });
 
@@ -595,15 +536,14 @@ var getPoints = function(data) {
 };
 
 /*
- * Return data for the FCC zipline
+ * Return data for the FCC project
  */
 var topSimple = function(req, res, sortcol) {
 
    // assume that users hiding their results, don't want to be listed in the top100
-   var query = Fccuser.find({$or: [{basejumps: {$gt:0}}, 
-                                   {ziplines: {$gt:0}},
-                                   {bonfires: {$gt:0}},
-                                   {waypoints: {$gt:0}}]});
+   var query = Fccuser.find({$or: [{projects: {$gt:0}}, 
+                                   {algorithms: {$gt:0}},
+                                   {challenges: {$gt:0}}]});
    query.sort('-'+sortcol);
    query.select('username img community communityRecent lastUpdate');
    query.limit(100);
@@ -653,7 +593,7 @@ var getUnique = function(arr) {
       var uniqueChals = [];
       var x = {};
       for (var i = arr.length-1;i>=0; i--) {
-          if (!(isNaN(arr[i].date)  ||   x.hasOwnProperty(arr[i].title))) {
+          if (!(x.hasOwnProperty(arr[i].title))) {
               uniqueChals.push(arr[i]);
               x[arr[i].title] = 1;
           }

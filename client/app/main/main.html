@@ -9,22 +9,22 @@
       
       <table class="table table-striped table-bordered">
         <tr>
-        	<th id="header" colspan="10">
+        	<th id="header" colspan="9">
         		<h3 ng-show="onRecentPage">(unofficial) Leaderboard over last 30 days activity</h3><a href="#" class="small-link" ng-click="getDataAlltime()" ng-show="onRecentPage">All Time leaderboard</a>
       		<h3 ng-hide="onRecentPage">(unofficial) All Time Leaderboard</h3><a href="#" class="small-link" ng-click="getDataRecent()" ng-hide="onRecentPage">30 days leaderboard</a>
       	</th>
         </tr>
         <tr class="top100" ng-show="isLoggedIn()">
-          <td colspan="10">You're following:&nbsp;&nbsp;<span ng-repeat="follow in me.followimg"><img ng-src="{{follow}}" class="userimg"/></span><button class="btn rank-btn" ng-click="getDataFollowing()" ng-hide="showingFollowing">Show Following</button><button class="btn rank-btn" ng-click="getDataRecent()" ng-show="showingFollowing">Show Top 100</button>
+          <td colspan="9">You're following:&nbsp;&nbsp;<span ng-repeat="follow in me.followimg"><img ng-src="{{follow}}" class="userimg"/></span><button class="btn rank-btn" ng-click="getDataFollowing()" ng-hide="showingFollowing">Show Following</button><button class="btn rank-btn" ng-click="getDataRecent()" ng-show="showingFollowing">Show Top 100</button>
           </td>
         </tr>
         <tr class="top100">
-          <td colspan="10">
+          <td colspan="9">
           <div class="single"><span>Not listed below? Get your own ranking here: </span> <input type="text" placeholder="Username" ng-model="username" ng-keypress="handleEnter($event)"> <button class="btn rank-btn" ng-click="getUserRanking()">Get ranking</button> <button ng-show="isLoggedIn()" ng-click="followUser('input')" class="btn rank-btn">Follow</button></div>
           </td>
         </tr>
         <tr ng-show="notFound" class="top100">
-          <td colspan="10">
+          <td colspan="9">
           	<span>No ranking found for {{username}}</span> 
           </td>
         </tr>
@@ -35,9 +35,8 @@
           <span class="user-name">{{singleUser.username}}</span></a></td>
           <td class="count"><span ng-show="onRecentPage">{{singleUser.totalRecent}}</span><span ng-hide="onRecentPage">{{singleUser.total}}</span></td>
           <td class="count"><span ng-show="onRecentPage">{{singleUser.pointsRecent}}</span><span ng-hide="onRecentPage">{{singleUser.points}}</span></td>
-          <td class="count"><span ng-show="onRecentPage">{{singleUser.basejumpsRecent}}</span><span ng-hide="onRecentPage">{{singleUser.basejumps}}</span></td>
-          <td class="count"><span ng-show="onRecentPage">{{singleUser.ziplinesRecent}}</span><span ng-hide="onRecentPage">{{singleUser.ziplines}}</span></td>
-          <td class="count"><span ng-show="onRecentPage">{{singleUser.bonfiresRecent}}</span><span ng-hide="onRecentPage">{{singleUser.bonfires}}</span></td>
+          <td class="count"><span ng-show="onRecentPage">{{singleUser.projectsRecent}}</span><span ng-hide="onRecentPage">{{singleUser.projects}}</span></td>
+          <td class="count"><span ng-show="onRecentPage">{{singleUser.algorithmsRecent}}</span><span ng-hide="onRecentPage">{{singleUser.algorithms}}</span></td>
           <td class="count"><span ng-show="onRecentPage">{{singleUser.total}}</span><span ng-hide="onRecentPage">{{singleUser.totalRecent}}</span></td>
           <td class="lastchecked">{{singleUser.lastUpdate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
           <td class="buttons"><button class="btn btn-default" ng-click="refreshUser(singleUser.username)"><i class="glyphicon glyphicon-refresh"></i></button></td>
@@ -58,16 +57,12 @@
             <span class="sortorder" ng-show="predicate === 'pointsRecent'" ng-class="{reverse:reverse}"></span>
           </th>
           <th class="numbercol">
-            <a href="" ng-click="order('basejumpsRecent')">Basejumps (x60)</a>
-            <span class="sortorder" ng-show="predicate === 'basejumpsRecent'" ng-class="{reverse:reverse}"></span>
+            <a href="" ng-click="order('projectsRecent')">Projects (x50)</a>
+            <span class="sortorder" ng-show="predicate === 'projectsRecent'" ng-class="{reverse:reverse}"></span>
           </th>
           <th class="numbercol">
-            <a href="" ng-click="order('ziplinesRecent')">Ziplines (x30)</a>
-            <span class="sortorder" ng-show="predicate === 'ziplinesRecent'" ng-class="{reverse:reverse}"></span>
-          </th>
-          <th class="numbercol">
-            <a href="" ng-click="order('bonfiresRecent')">Bonfires (x3)</a>
-            <span class="sortorder" ng-show="predicate === 'bonfiresRecent'" ng-class="{reverse:reverse}"></span>
+            <a href="" ng-click="order('algorithmsRecent')">Algorithms (x5)</a>
+            <span class="sortorder" ng-show="predicate === 'algorithmsRecent'" ng-class="{reverse:reverse}"></span>
           </th>
           <th class="numbercol">
             <a href="" ng-click="order('total')">Overall score</a>
@@ -92,16 +87,12 @@
             <span class="sortorder" ng-show="predicate === 'points'" ng-class="{reverse:reverse}"></span>
           </th>
           <th class="numbercol">
-            <a href="" ng-click="order('basejumps')">Basejumps (x60)</a>
-            <span class="sortorder" ng-show="predicate === 'basejumps'" ng-class="{reverse:reverse}"></span>
+            <a href="" ng-click="order('projects')">Projects (x50)</a>
+            <span class="sortorder" ng-show="predicate === 'projects'" ng-class="{reverse:reverse}"></span>
           </th>
           <th class="numbercol">
-            <a href="" ng-click="order('ziplines')">Ziplines (x30)</a>
-            <span class="sortorder" ng-show="predicate === 'ziplines'" ng-class="{reverse:reverse}"></span>
-          </th>
-          <th class="numbercol">
-            <a href="" ng-click="order('bonfires')">Bonfires (x3)</a>
-            <span class="sortorder" ng-show="predicate === 'bonfires'" ng-class="{reverse:reverse}"></span>
+            <a href="" ng-click="order('algorithms')">Algorithms (x5)</a>
+            <span class="sortorder" ng-show="predicate === 'algorithms'" ng-class="{reverse:reverse}"></span>
           </th>
           <th class="numbercol">
             <a href="" ng-click="order('totalRecent')">Recent score</a>
@@ -116,9 +107,8 @@
           <span class="user-name">{{camper.username}}</span></a></td>
           <td class="count"><span ng-show="onRecentPage">{{camper.totalRecent}}</span><span ng-hide="onRecentPage">{{camper.total}}</span></td>
           <td class="count"><span ng-show="onRecentPage">{{camper.pointsRecent}}</span><span ng-hide="onRecentPage">{{camper.points}}</span></td>
-          <td class="count"><span ng-show="onRecentPage">{{camper.basejumpsRecent}}</span><span ng-hide="onRecentPage">{{camper.basejumps}}</span></td>
-          <td class="count"><span ng-show="onRecentPage">{{camper.ziplinesRecent}}</span><span ng-hide="onRecentPage">{{camper.ziplines}}</span></td>
-          <td class="count"><span ng-show="onRecentPage">{{camper.bonfiresRecent}}</span><span ng-hide="onRecentPage">{{camper.bonfires}}</span></td>
+          <td class="count"><span ng-show="onRecentPage">{{camper.projectsRecent}}</span><span ng-hide="onRecentPage">{{camper.projects}}</span></td>
+          <td class="count"><span ng-show="onRecentPage">{{camper.algorithmsRecent}}</span><span ng-hide="onRecentPage">{{camper.algorithms}}</span></td>
           <td class="count"><span ng-show="onRecentPage">{{camper.total}}</span><span ng-hide="onRecentPage">{{camper.totalRecent}}</span></td>
           <td class="lastchecked">{{camper.lastUpdate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
           <td class="buttons" ng-class="isLoggedIn()">
@@ -131,7 +121,7 @@
           <td colspan="10">
           This list is assembled by taking a list of users from the <a href="https://gitter.im/FreeCodeCamp/FreeCodeCamp">FreeCodeCamp chat</a> and screen scraping <span ng-show="onRecentPage">recent activity </span>from the user's detail pages from the FreeCodeCamp site. This list is updated every couple of days. It is not a realtime presentation of user scores on FreeCodeCamp.com.<br/> 
           The list is ordered by descending total score. This score is calculated as 
-          <em>Points + (Basejumps * 60) + (Ziplines * 30) + (Bonfires * 3)</em>.<br/>
+          <em>Points + (projects * 50) + (algorithms * 5)</em>.<br/>
           Take a look at the <span ng-show="onRecentPage"><a href="#" ng-click="getDataAlltime()">All Time Leaderboard</a></span><span ng-hide="onRecentPage"><a href="#" ng-click="getDataRecent()">Recent activity leaderboard</a></span>.
           </td>
         </tr>
