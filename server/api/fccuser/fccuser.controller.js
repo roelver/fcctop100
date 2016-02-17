@@ -455,9 +455,9 @@ var doVerify = function(crit) {
                 $('.public-profile-img').filter(function(){
                    json.img = $(this)['0'].attribs.src;
                 });
+                var thresh = new Date().getTime();
 
-                var threshold = new Date().getTime() - 30*24*60*60*1000;
-
+                var threshold = thresh - (thresh%(24*60*60*1000)) - 60*60*1000 - 30*24*60*60*1000;
                 $('table.table-striped').filter(function(){
                    var table = $(this)['0'];
                  //  console.log("Table",table);
@@ -474,7 +474,7 @@ var doVerify = function(crit) {
                       else {
                         rowdata.title = table.children[i].children[0].children[0].data;
                       }
-                      rowdata.recent = (Date.parse(table.children[i].children[1].children[0].data) > threshold);
+                      rowdata.recent = (Date.parse(table.children[i].children[1].children[0].data) >= threshold);
                       all.push(rowdata);
                     }
                     var allUnique = getUnique(all);
@@ -570,6 +570,7 @@ var getRecentScores = function(html, json, threshold) {
       heatmapDataStart += 15;
       var heatmapDataEnd =   html.indexOf('}', heatmapDataStart) +1;
       var heatmap  = JSON.parse(html.substring(heatmapDataStart, heatmapDataEnd));
+   //   console.log("Threshold: "+threshold, heatmap.length);
       json.pointsRecent = getRecentPoints(heatmap, threshold);
   }
 };
@@ -579,6 +580,7 @@ var getRecentPoints = function(heatmap, threshold) {
   for (var key in heatmap) {
      if (heatmap.hasOwnProperty(key) && parseFloat(key) > (threshold/1000)) {
         recentPoints++;
+    //    console.log("Counted"+recentPoints+": "+key, parseFloat(key)+"vs."+(threshold/1000));
      }
   }
   return recentPoints;
