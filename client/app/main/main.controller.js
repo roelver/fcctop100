@@ -86,7 +86,7 @@ angular.module('fccuserlistApp')
        $scope.singleUser = undefined;
        $scope.showingFollowing = false;
        $http.get('/api/fccusers/top100/alltime').success(function(campers) {
-         $scope.order($scope.newPredicate());
+//         $scope.order($scope.newPredicate());
          $scope.reverse = true;
          $scope.campers = campers;
        });

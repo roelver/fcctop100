@@ -472,7 +472,12 @@ var doVerify = function(crit) {
                         rowdata.title = table.children[i].children[0].children[0].children[0].data;
                       }
                       else {
-                        rowdata.title = table.children[i].children[0].children[0].data;
+                        if (table.children[i].children[0].children[0]) {
+                          rowdata.title = table.children[i].children[0].children[0].data;
+                        }
+                        else {
+                          rowdata.title = "Unknown";
+                        }
                       }
                       rowdata.recent = (Date.parse(table.children[i].children[1].children[0].data) >= threshold);
                       all.push(rowdata);
