@@ -11,7 +11,6 @@ var router = express.Router();
 
 router.get('/', controller.index);
 
-router.get('/loadall', controller.loadInChunks);
 router.get('/loadmore', controller.loadMore);
 
 router.get('/update/all', controller.updateAll);

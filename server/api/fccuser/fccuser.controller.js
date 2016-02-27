@@ -258,18 +258,11 @@ exports.loadMore = function(req, res) {
 
    Fccuser.find().count().exec(function (err, count) {
       if (err) return handleError(res, err);
-      setTimeout(loadNextChunk, 0, count+500, 30);
+      setTimeout(loadNextChunk, 0, count+500, 20);
 
       return res.status(200).send('<h1>Loading new users from chat starting from '+count+'. Keep an eye on the logs.</h1>');
     });
 
-};
-
-// Load all users from the chat.
-exports.loadInChunks = function(req, res) {
-
-  setTimeout(loadNextChunk, 0, 0, 30);
-  return res.status(200).send('<h1>Refresh all users in chunks is started. Keep an eye on the logs.</h1>');
 };
 
 var loadNextChunk = function(skip, limit) {
@@ -297,7 +290,7 @@ var loadNextChunk = function(skip, limit) {
       for (var i=0; i< users.length; i++) {
            addFccUser(users[i].username);
       }
-      setTimeout(loadNextChunk, 20000, (skip+limit), limit);
+      setTimeout(loadNextChunk, 30000, (skip+limit), limit);
 
     });
   });
@@ -511,8 +504,8 @@ var doVerify = function(crit) {
                 getRecentScores(html, json, threshold);
         
                 json.totalRecent = (json.projectsRecent * 50) +
-                                  + (json.algorithmsRecent * 5) + json.pointsRecent;
-                json.total = (json.projects * 50) + (json.algorithms * 5) + json.points;
+                                  + (json.algorithmsRecent) + json.pointsRecent;
+                json.total = (json.projects * 50) + (json.algorithms) + json.points;
                 json.community = json.points - json.projects - json.algorithms - json.challenges;
                 json.communityRecent = json.pointsRecent - json.projectsRecent - json.algorithmsRecent - json.challengesRecent;
 
@@ -528,7 +521,7 @@ var doVerify = function(crit) {
             });
 
         });
-        setTimeout(doVerify, 20000, crit);
+        setTimeout(doVerify, 30000, crit);
       }
   });
 };
