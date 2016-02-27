@@ -503,9 +503,8 @@ var doVerify = function(crit) {
 
                 getRecentScores(html, json, threshold);
         
-                json.totalRecent = (json.projectsRecent * 50) +
-                                  + (json.algorithmsRecent) + json.pointsRecent;
-                json.total = (json.projects * 50) + (json.algorithms) + json.points;
+                json.totalRecent = (json.projectsRecent * 50) + json.pointsRecent;
+                json.total = (json.projects * 50) + json.points;
                 json.community = json.points - json.projects - json.algorithms - json.challenges;
                 json.communityRecent = json.pointsRecent - json.projectsRecent - json.algorithmsRecent - json.challengesRecent;
 

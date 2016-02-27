@@ -36,7 +36,7 @@
           <td class="count"><span ng-show="onRecentPage">{{singleUser.totalRecent}}</span><span ng-hide="onRecentPage">{{singleUser.total}}</span></td>
           <td class="count"><span ng-show="onRecentPage">{{singleUser.pointsRecent}}</span><span ng-hide="onRecentPage">{{singleUser.points}}</span></td>
           <td class="count"><span ng-show="onRecentPage">{{singleUser.projectsRecent}}</span><span ng-hide="onRecentPage">{{singleUser.projects}}</span></td>
-          <td class="count"><span ng-show="onRecentPage">{{singleUser.algorithmsRecent}}</span><span ng-hide="onRecentPage">{{singleUser.algorithms}}</span></td>
+          <td class="count"><span ng-show="onRecentPage">{{singleUser.cummunityRecent}}</span><span ng-hide="onRecentPage">{{singleUser.community}}</span></td>
           <td class="count"><span ng-show="onRecentPage">{{singleUser.total}}</span><span ng-hide="onRecentPage">{{singleUser.totalRecent}}</span></td>
           <td class="lastchecked">{{singleUser.lastUpdate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
           <td class="buttons"><button class="btn btn-default" ng-click="refreshUser(singleUser.username)"><i class="glyphicon glyphicon-refresh"></i></button></td>
@@ -61,8 +61,8 @@
             <span class="sortorder" ng-show="predicate === 'projectsRecent'" ng-class="{reverse:reverse}"></span>
           </th>
           <th class="numbercol">
-            <a href="" ng-click="order('algorithmsRecent')">Algorithms + Challenges</a>
-            <span class="sortorder" ng-show="predicate === 'algorithmsRecent'" ng-class="{reverse:reverse}"></span>
+            <a href="" ng-click="order('communityRecent')">Help Score</a>
+            <span class="sortorder" ng-show="predicate === 'communityRecent'" ng-class="{reverse:reverse}"></span>
           </th>
           <th class="numbercol">
             <a href="" ng-click="order('total')">Overall score</a>
@@ -91,8 +91,8 @@
             <span class="sortorder" ng-show="predicate === 'projects'" ng-class="{reverse:reverse}"></span>
           </th>
           <th class="numbercol">
-            <a href="" ng-click="order('algorithms')">Algorithms + Challenges</a>
-            <span class="sortorder" ng-show="predicate === 'algorithms'" ng-class="{reverse:reverse}"></span>
+            <a href="" ng-click="order('community')">Help score</a>
+            <span class="sortorder" ng-show="predicate === 'community'" ng-class="{reverse:reverse}"></span>
           </th>
           <th class="numbercol">
             <a href="" ng-click="order('totalRecent')">Recent score</a>
@@ -108,7 +108,7 @@
           <td class="count"><span ng-show="onRecentPage">{{camper.totalRecent}}</span><span ng-hide="onRecentPage">{{camper.total}}</span></td>
           <td class="count"><span ng-show="onRecentPage">{{camper.pointsRecent}}</span><span ng-hide="onRecentPage">{{camper.points}}</span></td>
           <td class="count"><span ng-show="onRecentPage">{{camper.projectsRecent}}</span><span ng-hide="onRecentPage">{{camper.projects}}</span></td>
-          <td class="count"><span ng-show="onRecentPage">{{camper.algorithmsRecent + camper.challengesRecent}}</span><span ng-hide="onRecentPage">{{camper.algorithms + camper.challenges}}</span></td>
+          <td class="count"><span ng-show="onRecentPage">{{camper.communityRecent}}</span><span ng-hide="onRecentPage">{{camper.community}}</span></td>
           <td class="count"><span ng-show="onRecentPage">{{camper.total}}</span><span ng-hide="onRecentPage">{{camper.totalRecent}}</span></td>
           <td class="lastchecked">{{camper.lastUpdate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
           <td class="buttons" ng-class="isLoggedIn()">
