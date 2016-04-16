@@ -258,7 +258,7 @@ exports.loadMore = function(req, res) {
 
    Fccuser.find().count().exec(function (err, count) {
       if (err) return handleError(res, err);
-      setTimeout(loadNextChunk, 0, count+500, 20);
+      setTimeout(loadNextChunk, 0, count+1000, 5);
 
       return res.status(200).send('<h1>Loading new users from chat starting from '+count+'. Keep an eye on the logs.</h1>');
     });
@@ -290,7 +290,7 @@ var loadNextChunk = function(skip, limit) {
       for (var i=0; i< users.length; i++) {
            addFccUser(users[i].username);
       }
-      setTimeout(loadNextChunk, 30000, (skip+limit), limit);
+      setTimeout(loadNextChunk, 15000, (skip+limit), limit);
 
     });
   });
@@ -389,7 +389,7 @@ exports.getVerifiedUsername = function(req, res) {
 var doVerify = function(crit) {
 
    var query = Fccuser.find(crit);
-   query.limit(25);
+   query.limit(5);
    query.exec(function (err, fccusers) {
       
       if (fccusers && fccusers.length > 0) {
@@ -520,7 +520,7 @@ var doVerify = function(crit) {
             });
 
         });
-        setTimeout(doVerify, 30000, crit);
+        setTimeout(doVerify, 15000, crit);
       }
   });
 };
