@@ -268,9 +268,9 @@ exports.loadMore = function(req, res) {
 var loadNextChunk = function(skip, limit) {
 
   var opts = {
-    host: 'gitter.im',
+    host: 'api.gitter.im',
     method: 'GET',
-    path: '/api/v1/rooms/546fd572db8155e6700d6eaf/users?access_token=7ad0f9a65347ce116fb5dec4c33f798e316500d0'+
+    path: '/v1/rooms/546fd572db8155e6700d6eaf/users?access_token=7ad0f9a65347ce116fb5dec4c33f798e316500d0'+
     '&limit='+limit+'&skip='+skip  
   };
 
@@ -285,6 +285,7 @@ var loadNextChunk = function(skip, limit) {
     });
 
     resp.on('end', function() {
+      console.log(responseString);
 
       var users = JSON.parse(responseString);
       for (var i=0; i< users.length; i++) {
