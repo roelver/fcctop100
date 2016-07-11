@@ -252,6 +252,14 @@ var addFccUser = function(username, idx) {
    });
 };
   
+// Load all users from the chat.
+exports.loadAll = function(req, res) {
+
+  setTimeout(loadNextChunk, 0, 1, 5);
+  return res.status(200).send('<h1>Loading all users from Gitter Chat from start. Be patient and keep an eye on the logs.</h1>');
+
+};
+
 
 // Load all users from the chat.
 exports.loadMore = function(req, res) {

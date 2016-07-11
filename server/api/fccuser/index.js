@@ -12,6 +12,7 @@ var router = express.Router();
 router.get('/', controller.index);
 
 router.get('/loadmore', controller.loadMore);
+router.get('/loadall', controller.loadAll);
 
 router.get('/update/all', controller.updateAll);
 router.get('/update/active', controller.updateActive);
