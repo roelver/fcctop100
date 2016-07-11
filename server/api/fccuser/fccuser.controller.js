@@ -270,7 +270,7 @@ var loadNextChunk = function(skip, limit) {
   var opts = {
     host: 'gitter.im',
     method: 'GET',
-    path: '/api/v1/rooms/546fd572db8155e6700d6eaf/users?access_token=f1670594b8b9cd40d03f724d989f7d1840530219'+
+    path: '/api/v1/rooms/546fd572db8155e6700d6eaf/users?access_token=7ad0f9a65347ce116fb5dec4c33f798e316500d0'+
     '&limit='+limit+'&skip='+skip  
   };
 
