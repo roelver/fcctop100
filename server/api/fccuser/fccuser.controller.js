@@ -471,7 +471,11 @@ var doVerify = function(crit) {
                    for (var i=1;i < table.children.length; i++) {
                       var rowdata = {};
                       if (isProjects) {
-                        rowdata.title = table.children[i].children[0].children[0].children[0].data;
+                        if (table.children[i].children[0].children[0].children[0]) {
+                          rowdata.title = table.children[i].children[0].children[0].children[0].data;
+                        } else {
+                          rowdata.title = 'Unknown';
+                        }
                       }
                       else {
                         if (table.children[i].children[0].children[0]) {
